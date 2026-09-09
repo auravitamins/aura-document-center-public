@@ -1,0 +1,731 @@
+<title>Aura España Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#EEF1F4; --surface:#FFFFFF; --surface-2:#F7F9FB;
+  --ink:#10161D; --ink-soft:#4A5663; --ink-faint:#78848F;
+  --rule:#D3DAE1; --rule-strong:#B6C1CB;
+  --accent:#1B4F8F; --accent-soft:#E4EDF8;
+  --stamp:#A8323C; --stamp-soft:#F7E4E5;
+  --amber:#8A5C10; --amber-soft:#FBEFD8;
+  --green:#1F6350; --green-soft:#DFEFE8;
+  --shadow:0 1px 2px rgba(16,22,29,.06), 0 8px 24px -12px rgba(16,22,29,.18);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1318; --surface:#161D24; --surface-2:#1B242C;
+  --ink:#E4E9EE; --ink-soft:#9FADBA; --ink-faint:#7C8996;
+  --rule:#2A343E; --rule-strong:#3B4854;
+  --accent:#77ADEC; --accent-soft:#152634;
+  --stamp:#E58A93; --stamp-soft:#2E1B1E;
+  --amber:#DCA94E; --amber-soft:#2C2415;
+  --green:#63C4A0; --green-soft:#13291F;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --paper:#0E1318; --surface:#161D24; --surface-2:#1B242C;
+  --ink:#E4E9EE; --ink-soft:#9FADBA; --ink-faint:#7C8996;
+  --rule:#2A343E; --rule-strong:#3B4854;
+  --accent:#77ADEC; --accent-soft:#152634;
+  --stamp:#E58A93; --stamp-soft:#2E1B1E;
+  --amber:#DCA94E; --amber-soft:#2C2415;
+  --green:#63C4A0; --green-soft:#13291F;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{background:var(--paper); color:var(--ink); margin:0;
+  font-family:"Source Sans 3",-apple-system,BlinkMacSystemFont,sans-serif; font-size:16.5px; line-height:1.58;
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:Archivo,Arial,sans-serif; margin:0; text-wrap:balance}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums}
+.wrap{max-width:1240px; margin:0 auto; padding:0 32px 90px}
+
+/* header */
+header{padding:36px 0 18px}
+.kicker{font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.15em;
+  text-transform:uppercase; color:var(--ink-faint)}
+h1{font-size:clamp(32px,5vw,52px); font-weight:800; letter-spacing:-.028em; line-height:1.04; margin:12px 0 10px}
+.sub{font-size:18.5px; color:var(--ink-soft); max-width:none}
+
+/* progress */
+.prog{display:flex; align-items:center; gap:14px; margin:22px 0 0;
+  background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:14px 18px;
+  box-shadow:var(--shadow)}
+.bar{flex:1; height:7px; background:var(--rule); border-radius:99px; overflow:hidden}
+.bar i{display:block; height:100%; width:0%; background:var(--accent); border-radius:99px;
+  transition:width .3s ease}
+.prog .pct{font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:600; color:var(--accent);
+  white-space:nowrap}
+.prog .rst{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint);
+  background:none; border:1px solid var(--rule); border-radius:4px; padding:4px 9px; cursor:pointer}
+.prog .rst:hover{color:var(--ink); border-color:var(--rule-strong)}
+
+/* tabs */
+nav.tabs{position:sticky; top:0; z-index:20; background:var(--paper);
+  border-bottom:1px solid var(--rule); margin:26px 0 0; padding:6px 0 0;
+  display:flex; gap:2px; overflow-x:auto; scrollbar-width:thin}
+nav.tabs button{flex:0 0 auto; background:none; border:0; border-bottom:3px solid transparent;
+  padding:11px 15px 10px; cursor:pointer; color:var(--ink-faint); font-family:Archivo,sans-serif;
+  font-size:14px; font-weight:600; letter-spacing:-.005em; white-space:nowrap; display:flex;
+  align-items:center; gap:8px; transition:color .15s}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button[aria-selected="true"]{color:var(--accent); border-bottom-color:var(--accent)}
+nav.tabs .n{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600;
+  background:var(--rule); color:var(--ink-soft); border-radius:4px; padding:2px 6px; min-width:20px;
+  text-align:center}
+nav.tabs button[aria-selected="true"] .n{background:var(--accent); color:var(--surface)}
+nav.tabs button.done .n{background:var(--green); color:#fff}
+nav.tabs button.done .n::after{content:"✓"}
+nav.tabs button.done .n span{display:none}
+
+/* panels */
+.panel{padding-top:30px}
+.panel[hidden]{display:none!important}
+.stage-h{margin-bottom:8px}
+.stagetop{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); gap:14px 48px;
+  align-items:start; margin-bottom:26px; padding-bottom:22px; border-bottom:1px solid var(--rule)}
+@media (max-width:880px){.stagetop{grid-template-columns:1fr; gap:10px}}
+.stage-h .meta{font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--accent); margin-bottom:9px; display:flex; gap:12px; flex-wrap:wrap;
+  align-items:center}
+.stage-h .meta .sep{color:var(--rule-strong)}
+.stage-h h2{font-size:33px; font-weight:800; letter-spacing:-.024em; margin-bottom:0}
+.goal{font-size:18px; color:var(--ink-soft); max-width:none; margin:0}
+
+.pre{background:var(--surface-2); border:1px solid var(--rule); border-left:3px solid var(--rule-strong);
+  border-radius:0 6px 6px 0; padding:13px 18px; margin:0 0 24px; font-size:15px; color:var(--ink-soft)}
+.pre b{color:var(--ink)}
+.pre.ok{border-left-color:var(--green); background:var(--green-soft)}
+
+/* steps */
+.steps{display:flex; flex-direction:column; gap:10px; margin:0 0 24px}
+.step{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:18px 22px;
+  box-shadow:var(--shadow); display:grid; grid-template-columns:26px minmax(0,1fr); gap:0 16px; align-items:start}
+.stx{display:grid; grid-template-columns:minmax(0,1fr) 168px; gap:0 32px; align-items:start}
+.stx > h4, .stx > p{grid-column:1}
+.stx > .tags{grid-column:2; grid-row:1 / span 20; flex-direction:column; align-items:flex-start;
+  margin-top:2px; gap:6px}
+.stx > .watch, .stx > .rfq{grid-column:1 / -1}
+@media (max-width:880px){
+  .stx{grid-template-columns:1fr; gap:0}
+  .stx > .tags{grid-column:1; grid-row:auto; flex-direction:row; margin-top:9px}
+}
+.step.checked{border-color:var(--green)}
+.step.checked .stx h4{color:var(--ink-faint); text-decoration:line-through;
+  text-decoration-color:var(--green); text-decoration-thickness:1.5px}
+.step input[type=checkbox]{appearance:none; width:20px; height:20px; margin:2px 0 0; cursor:pointer;
+  border:1.5px solid var(--rule-strong); border-radius:5px; background:var(--surface); display:grid;
+  place-content:center; transition:.15s}
+.step input[type=checkbox]:checked{background:var(--green); border-color:var(--green)}
+.step input[type=checkbox]:checked::after{content:"✓"; color:#fff; font-size:13px; font-weight:700; line-height:1}
+.step input[type=checkbox]:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.stx h4{font-size:17px; font-weight:700; letter-spacing:-.012em; margin-bottom:5px}
+.stx p{margin:0 0 7px; font-size:15.5px; color:var(--ink-soft)}
+.stx p:last-child{margin-bottom:0}
+.stx b{color:var(--ink)}
+.tags{display:flex; gap:7px; flex-wrap:wrap; margin-top:9px}
+.tag{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase;
+  padding:3px 8px; border-radius:4px; background:var(--surface-2); border:1px solid var(--rule);
+  color:var(--ink-faint); font-weight:600}
+.tag.who{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
+
+.twocol{display:grid; grid-template-columns:1fr 1fr; gap:0 44px; margin-bottom:8px}
+.twocol p{margin:0 0 14px}
+@media (max-width:880px){.twocol{grid-template-columns:1fr; gap:0}}
+.watch{background:var(--amber-soft); border:1px solid var(--amber); border-radius:7px;
+  padding:12px 16px; margin:10px 0 0; font-size:15px; color:var(--ink-soft)}
+.watch b{color:var(--ink)}
+.watch .wl{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--amber); font-weight:700; display:block; margin-bottom:4px}
+.stop{background:var(--stamp-soft); border:1px solid var(--stamp)}
+.stop .wl{color:var(--stamp)}
+
+.donebar{display:flex; align-items:center; gap:12px; background:var(--green-soft);
+  border:1px solid var(--green); border-radius:8px; padding:14px 18px; margin-top:6px}
+.donebar .dl{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--green); font-weight:700; white-space:nowrap}
+.donebar span.t{font-size:15.5px; color:var(--ink); font-weight:600}
+
+/* overview */
+.ovgrid{display:flex; flex-direction:column; gap:9px; margin:0 0 26px}
+.ovrow{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:17px 22px;
+  box-shadow:var(--shadow); display:grid; grid-template-columns:38px minmax(0,1fr) 190px; gap:0 22px; align-items:center;
+  cursor:pointer; text-align:left; width:100%; font:inherit; color:inherit}
+.ovrow:hover{border-color:var(--accent)}
+.ovrow .on{font-family:Archivo,sans-serif; font-size:22px; font-weight:800; color:var(--rule-strong);
+  letter-spacing:-.03em}
+.ovrow h4{font-size:17px; font-weight:700; letter-spacing:-.012em; margin-bottom:3px}
+.ovrow p{margin:0; font-size:15px; color:var(--ink-soft)}
+.ovrow .when{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint);
+  text-transform:uppercase; letter-spacing:.05em; text-align:right; line-height:1.5}
+.ovrow.par{border-left:3px solid var(--green)}
+
+.facts{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:0 0 26px}
+.fact{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:15px 17px;
+  box-shadow:var(--shadow)}
+.fact .fl{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-faint); margin-bottom:6px}
+.fact .fv{font-family:Archivo,sans-serif; font-size:21px; font-weight:700; letter-spacing:-.02em;
+  line-height:1.15}
+.fact .fn{font-size:13.5px; color:var(--ink-soft); margin-top:4px}
+
+h3.sh{font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-weight:700; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--accent); padding-bottom:8px; border-bottom:1px solid var(--rule);
+  margin:32px 0 18px}
+
+.rfq{background:var(--surface-2); border:1px solid var(--rule); border-left:3px solid var(--accent);
+  border-radius:0 6px 6px 0; padding:18px 22px; font-size:15px; color:var(--ink-soft); margin:14px 0 0}
+.rfq ul{margin:8px 0 10px; padding-left:19px}
+.rfq li{margin-bottom:4px}
+.rfq p{margin:0 0 9px}
+.rfq p:last-child{margin-bottom:0}
+
+table{border-collapse:collapse; width:100%; font-size:15px; min-width:520px}
+.tw{overflow-x:auto; border:1px solid var(--rule); border-radius:8px; background:var(--surface);
+  box-shadow:var(--shadow); margin:0 0 24px}
+th{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--ink-faint); text-align:left; padding:12px 16px; background:var(--surface-2);
+  border-bottom:1px solid var(--rule-strong); font-weight:600}
+td{padding:12px 16px; border-bottom:1px solid var(--rule); color:var(--ink-soft); vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{color:var(--ink); font-weight:600}
+
+footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--rule);
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-faint);
+  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+
+@media (max-width:880px){.ovrow{grid-template-columns:34px minmax(0,1fr)}
+  .ovrow .when{grid-column:2; text-align:left; margin-top:7px}}
+@media (max-width:640px){
+  body{font-size:16px}
+  .wrap{padding:0 16px 70px}
+  .ovrow{grid-template-columns:28px 1fr; gap:0 12px}
+  .ovrow .when{grid-column:2; text-align:left; margin-top:6px}
+  nav.tabs button{padding:10px 11px 9px; font-size:13px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="kicker">Aura Vitamins &middot; Spain expansion</div>
+  <h1>Aura España Roadmap</h1>
+  <p class="sub">Seven stages, in order. Tick things off as you go. Progress is saved in this browser.</p>
+  <div class="prog">
+    <span class="pct" id="pct">0%</span>
+    <span class="bar"><i id="barfill"></i></span>
+    <span class="mono" id="cnt" style="font-size:12px;color:var(--ink-faint);white-space:nowrap"></span>
+    <button class="rst" id="rst" type="button">Reset</button>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs" role="tablist">
+  <button role="tab" data-t="ov" aria-selected="true"><span class="n"><span>0</span></span>Overview</button>
+  <button role="tab" data-t="s1"><span class="n"><span>1</span></span>Spain store</button>
+  <button role="tab" data-t="s2"><span class="n"><span>2</span></span>Company</button>
+  <button role="tab" data-t="s3"><span class="n"><span>3</span></span>Registrations</button>
+  <button role="tab" data-t="s4"><span class="n"><span>4</span></span>Products</button>
+  <button role="tab" data-t="s5"><span class="n"><span>5</span></span>Manufacturing</button>
+  <button role="tab" data-t="s6"><span class="n"><span>6</span></span>Label &amp; notify</button>
+  <button role="tab" data-t="s7"><span class="n"><span>7</span></span>Launch</button>
+</nav>
+
+<!-- OVERVIEW -->
+<div class="panel" id="p-ov" role="tabpanel">
+  <div class="stagetop">
+    <div class="stage-h">
+      <div class="meta"><span>The whole thing on one page</span></div>
+      <h2>How this fits together</h2>
+    </div>
+    <p class="goal">Stages 1, 2 and 4 all start in week one and run at the same time. Nothing after stage 3 can move until the Spanish company exists, because the company is what signs everything.</p>
+  </div>
+
+  <div class="facts">
+    <div class="fact"><div class="fl">Setup cost</div><div class="fv">€1,200–3,500</div><div class="fn">Company formation</div></div>
+    <div class="fact"><div class="fl">Working capital</div><div class="fv">€3,000</div><div class="fn">Share capital, recoverable</div></div>
+    <div class="fact"><div class="fl">To first sale</div><div class="fv">4–6 months</div><div class="fn">Realistic, not optimistic</div></div>
+    <div class="fact"><div class="fl">Inventory</div><div class="fv">Set by MOQ</div><div class="fn">Lab quotes decide it</div></div>
+  </div>
+
+  <h3 class="sh">The seven stages</h3>
+  <div class="ovgrid">
+    <button class="ovrow par" data-go="s1"><span class="on">1</span><span><h4>Activate the Spain store</h4><p>Open the Amazon Europe account and clear KYC. Free, and independent of everything else.</p></span><span class="when">Start week 1<br>Runs in parallel</span></button>
+    <button class="ovrow par" data-go="s2"><span class="on">2</span><span><h4>Create the company in Spain</h4><p>Form the S.L. This is what unlocks every legal role you currently cannot fill.</p></span><span class="when">Weeks 1–4<br>Runs in parallel</span></button>
+    <button class="ovrow" data-go="s3"><span class="on">3</span><span><h4>Register the company for everything</h4><p>RGSEAA, VAT, VIES, packaging, trademark. Needs the CIF from stage 2.</p></span><span class="when">Weeks 3–8</span></button>
+    <button class="ovrow par" data-go="s4"><span class="on">4</span><span><h4>Choose the right products</h4><p>Your top 3 US sellers do not work in the EU. Pick again by what you can legally claim.</p></span><span class="when">Week 1<br>Free, one afternoon</span></button>
+    <button class="ovrow" data-go="s5"><span class="on">5</span><span><h4>Get the product made</h4><p>Quote Spanish labs, or import your US stock. Decide on the numbers.</p></span><span class="when">Weeks 2–12</span></button>
+    <button class="ovrow" data-go="s6"><span class="on">6</span><span><h4>Label and notify</h4><p>Spanish label, AESAN filing, lab certificate. Needs stages 2 and 5 done.</p></span><span class="when">Weeks 10–16</span></button>
+    <button class="ovrow" data-go="s7"><span class="on">7</span><span><h4>Launch on Amazon.es</h4><p>List in Spanish, load the packaging number, start selling.</p></span><span class="when">Weeks 14–18</span></button>
+  </div>
+
+  <div class="watch stop">
+    <span class="wl">The one thing that can strand everything</span>
+    <b>Start stage 1 on Monday.</b> The Amazon EU account and KYC are free and depend on nothing, but Amazon publishes no turnaround time and US LLCs hit predictable snags. If it stalls at month four, every euro spent on the company, the labs and the labels is sitting idle waiting for it.
+  </div>
+
+  <h3 class="sh">Why the Spanish company changes everything</h3>
+  <div class="twocol">
+  <p style="color:var(--ink-soft)">Spanish and EU law tests whether a <b>company</b> is established in Spain, not whether a person lives there. Right now Aura Vitamins LLC is a US company, so it cannot be named on a Spanish label, cannot file the product notification, and cannot register as a food business. A Spanish S.L. does all three, plus it removes the need for a fiscal representative and keeps liability inside a company instead of on a person.</p>
+  <p style="color:var(--ink-soft)">If the Spain lead holds a Spanish <b>DNI</b>, that DNI already works as a tax number, which skips a consular queue that otherwise runs two weeks to three months. They can be founder and administrator while living abroad.</p>
+  </div>
+</div>
+
+<!-- STAGE 1 -->
+<div class="panel" id="p-s1" role="tabpanel" hidden>
+  <div class="stagetop">
+    <div class="stage-h">
+      <div class="meta"><span>Stage 1</span><span class="sep">•</span><span>Start Monday</span><span class="sep">•</span><span>Owner: Jimmy</span></div>
+      <h2>Activate the Spain store</h2>
+    </div>
+    <p class="goal">Get an Amazon Europe seller account open and verified, under the US company. You do this first because it is free, it needs nothing else in place, and it takes the longest of anything you cannot control.</p>
+  </div>
+  <div class="pre ok"><b>You can start this today.</b> No Spanish company needed. You are opening the account now and listing products later, once stages 2 to 6 are done.</div>
+
+  <div class="steps">
+    <div class="step"><input type="checkbox" data-k="s1a"><div class="stx">
+      <h4>Gather the documents before you touch the form</h4>
+      <p>Certificate of Formation, Operating Agreement showing ownership, passport or ID for anyone owning more than 25%, a chargeable credit card, and a recent bank statement.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">1 hour</span></div>
+      <div class="watch"><span class="wl">Two rejections that catch everyone</span>
+      <b>Mercury, Wise and Payoneer statements are refused.</b> Amazon's policy excludes online-only banks outright, so use a traditional bank statement. And <b>do not use a registered-agent address</b> — it triggers "your business address is used by multiple companies."</div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s1b"><div class="stx">
+      <h4>Create the regional Europe account</h4>
+      <p>In Seller Central go to <b>Sell Globally → Amazon Stores Worldwide → Link Account</b>. You are creating a separate Europe account and linking it to the US one, not adding a marketplace to your existing account. It needs <b>its own email address</b>.</p>
+      <p>One Europe account covers Spain, Germany, France, Italy, the Netherlands, Poland, Sweden, Belgium and Ireland.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">30 minutes</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s1c"><div class="stx">
+      <h4>Submit KYC and chase it weekly</h4>
+      <p>Amazon runs a fresh verification on the entity even though it is already verified in the US. Expect a request for a document proving share ownership — <b>US LLCs do not issue shares</b>, so send the Certificate of Formation plus the Operating Agreement and say so plainly.</p>
+      <p>Amazon publishes no turnaround time. Put a weekly reminder in your calendar and do not let it go quiet.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">2 weeks to several months</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s1d"><div class="stx">
+      <h4>Confirm the subscription cost</h4>
+      <p>€39/month excluding VAT covers every European store. With the US and Europe accounts linked you pay <b>the lower of $39.99 or the sum of both</b>, so adding Europe is effectively free.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">5 minutes</span></div>
+    </div></div>
+  </div>
+
+  <div class="donebar"><span class="dl">Done when</span><span class="t">The Europe account is verified and you can log in to Seller Central Spain.</span></div>
+</div>
+
+<!-- STAGE 2 -->
+<div class="panel" id="p-s2" role="tabpanel" hidden>
+  <div class="stagetop">
+    <div class="stage-h">
+      <div class="meta"><span>Stage 2</span><span class="sep">•</span><span>Weeks 1–4</span><span class="sep">•</span><span>Owner: gestoría + ES lead</span></div>
+      <h2>Create the company in Spain</h2>
+    </div>
+    <p class="goal">Form a Spanish S.L. It becomes the importer, the name on the label, the party that files with AESAN, the food business registrant and the VAT payer. Every blocker in this project exists only because this company does not exist yet.</p>
+  </div>
+  <div class="pre"><b>Runs at the same time as stage 1.</b> Do not wait for Amazon.</div>
+
+  <div class="steps">
+    <div class="step"><input type="checkbox" data-k="s2a"><div class="stx">
+      <h4>Confirm the Spain lead holds a Spanish DNI</h4>
+      <p>If so, <b>the DNI is already the tax number</b> and there is no NIE application. That skips the single longest queue in company formation, normally two weeks to three months from abroad. They can be founder and administrator while living outside Spain.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">One message</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s2b"><div class="stx">
+      <h4>Agree his role in writing, before formation</h4>
+      <p>Sign a <b>commission agreement that pays nothing until first revenue</b>. That keeps cash where you want it, but documented. The Spain lead is about to carry a real legal role for four to six months with no money coming in, and an unpaid arrangement will not survive that.</p>
+      <p>Keep equity with Aura Vitamins LLC at 100% or 90/10, and keep any stake the Spain lead holds <b>under one third</b>. Put exit terms in the same page.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">One page</span></div>
+      <div class="watch"><span class="wl">What administrador actually means</span>
+      It is a legal role, not a title. A Spanish administrador becomes <b>personally liable for company debts</b> that arise after a dissolution cause appears if they fail to act within two months, and courts treat failure to file annual accounts as evidence against them. Manageable, but whoever takes the role should know before they accept.</div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s2c"><div class="stx">
+      <h4>Engage one Spanish gestoría for the whole job</h4>
+      <p>Ask for a fixed quote covering formation <b>plus</b> everything in stage 3. One relationship is far cheaper and easier than five.</p>
+      <div class="tags"><span class="tag who">ES lead</span><span class="tag">1 week to choose</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s2d"><div class="stx">
+      <h4>Reserve the name and sign the deed</h4>
+      <p>Reserve the company name at the Registro Mercantil Central — submit three or four options, first choices are often taken. Then either <b>CIRCE express</b>, which constitutes the company in 24 to 48 hours on standard statutes, or a conventional notarial deed, 5 to 15 business days from signature to registry.</p>
+      <p>If the Spain lead signs remotely, use an <b>apostilled power of attorney</b> to the gestoría. Videoconference incorporation is also permitted, but the POA is the dependable route.</p>
+      <div class="tags"><span class="tag who">gestoría</span><span class="tag">1–3 weeks</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s2e"><div class="stx">
+      <h4>Capitalise at €3,000, not €1</h4>
+      <p>The legal minimum is €1, but below €3,000 you must put 20% of profits into a legal reserve and the partners are <b>jointly liable for the shortfall</b> if the company is wound up. The €3,000 is working capital you still own, not a fee.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">€3,000</span></div>
+    </div></div>
+  </div>
+
+  <div class="donebar"><span class="dl">Done when</span><span class="t">CIF issued and the company is entered in the Registro Mercantil.</span></div>
+</div>
+
+<!-- STAGE 3 -->
+<div class="panel" id="p-s3" role="tabpanel" hidden>
+  <div class="stagetop">
+    <div class="stage-h">
+      <div class="meta"><span>Stage 3</span><span class="sep">•</span><span>Weeks 3–8</span><span class="sep">•</span><span>Owner: gestoría</span></div>
+      <h2>Register the company for everything</h2>
+    </div>
+    <p class="goal">Five registrations. Hand them to the gestoría as one brief and they mostly run in parallel.</p>
+  </div>
+  <div class="pre"><b>Needs stage 2 finished.</b> Everything here requires the CIF.</div>
+
+  <div class="steps">
+    <div class="step"><input type="checkbox" data-k="s3a"><div class="stx">
+      <h4>RGSEAA — the food business register, clave 26</h4>
+      <p>The sanitary register for food companies. Register for the activities you will actually do: importing, manufacturing, packaging, storing or distributing supplements.</p>
+      <p><b>This is on the critical path.</b> The AESAN product notification in stage 6 will not be accepted without it.</p>
+      <div class="tags"><span class="tag who">gestoría</span><span class="tag">Critical path</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s3b"><div class="stx">
+      <h4>VAT registration, then the ROI step</h4>
+      <p>File <b>Modelo 036</b> to register for VAT. Then file a <b>separate ROI application</b> so the number becomes valid on VIES. Amazon validates against VIES, so the plain domestic number is not enough.</p>
+      <p>The ROI step is routinely forgotten and it is a separate application. Ask the gestoría to confirm it is done.</p>
+      <div class="tags"><span class="tag who">gestoría</span><span class="tag">2 steps, not 1</span></div>
+      <div class="watch"><span class="wl">Good news on the rate</span>
+      Supplements qualifying as <em>complementos alimenticios</em> are taxed at <b>10% VAT, not 21%</b>. Worth eleven points of gross on every unit. Ask the gestoría to confirm it for your specific products.</div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s3c"><div class="stx">
+      <h4>Packaging: join a SCRAP first, then get the ENV number</h4>
+      <p>Join Ecoembes or an equivalent scheme <b>first</b>, because the membership certificate is required at the moment you register. Then obtain the <b>ENV number</b> from MITECO.</p>
+      <p>There is no small-producer exemption. The obligation starts at the first unit sold, and Amazon suspends listings without the number.</p>
+      <div class="tags"><span class="tag who">gestoría</span><span class="tag">~€300–475/yr</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s3d"><div class="stx">
+      <h4>File the EUIPO trademark</h4>
+      <p>Your US trademark does <b>not</b> work on Amazon.es. You need a European mark from EUIPO or the Spanish office. Without it you lose A+ content, Sponsored Brands, Vine reviews and Brand Analytics.</p>
+      <p>Amazon's IP Accelerator grants Brand Registry on a <b>pending</b> application if you need it sooner. Note this may be a new name — see stage 4.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">File early</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s3e"><div class="stx">
+      <h4>EORI number — only if you import</h4>
+      <p>Needed only if you go the import route in stage 5. Skip it if you manufacture in Spain.</p>
+      <div class="tags"><span class="tag who">gestoría</span><span class="tag">Conditional</span></div>
+    </div></div>
+  </div>
+
+  <div class="donebar"><span class="dl">Done when</span><span class="t">RGSEAA number issued, VAT number valid on VIES, ENV number in hand.</span></div>
+</div>
+
+<!-- STAGE 4 -->
+<div class="panel" id="p-s4" role="tabpanel" hidden>
+  <div class="stagetop">
+    <div class="stage-h">
+      <div class="meta"><span>Stage 4</span><span class="sep">•</span><span>Week 1, free</span><span class="sep">•</span><span>Owner: Jimmy</span></div>
+      <h2>Choose the right products</h2>
+    </div>
+    <p class="goal">Pick two or three products to launch. This costs nothing, takes an afternoon, and it is the cheapest place to kill a bad idea. Do it in week one.</p>
+  </div>
+  <div class="pre"><b>Runs in parallel with stages 1 and 2.</b> No company needed to make this decision.</div>
+
+  <div class="watch stop" style="margin-bottom:22px">
+    <span class="wl">Read this first</span>
+    <b>In the EU the brand name is itself a claim.</b> A product name that suggests a health benefit can only be used if the label also carries an officially authorised claim. The old grandfathering for existing brands expired in January 2022, so there is no way around it. This is why your top three US sellers are the wrong three to take.
+  </div>
+
+  <h3 class="sh">Your top 3, assessed</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Product</th><th>Verdict</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Vitiligo Purple Cream</td><td style="color:var(--stamp);font-weight:600">Leave out of Spain</td><td>A cream is a <b>cosmetic</b>, a completely different regime from supplements — different notification, different consultant, different factories. And vitiligo is a disease, so claiming repigmentation makes it a <b>medicine</b> needing an authorisation you will not get.</td></tr>
+        <tr><td>Audio Calm</td><td style="color:var(--amber);font-weight:600">Rename it</td><td>There is <b>no authorised EU claim for hearing or tinnitus</b>, so there is nothing to pair the name with. The formula may be fine. You already have a second label for Ecuador, so new artwork is not a big deal.</td></tr>
+        <tr><td>Bactirure</td><td style="color:var(--amber);font-weight:600">Check the name</td><td>Spain does allow the word <em>probiótico</em> on labels, which is more permissive than most of Europe. But no authorised claim links probiotics to any benefit, and if the name reads as bacteria plus cure that is a medical claim.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="steps">
+    <div class="step"><input type="checkbox" data-k="s4a"><div class="stx">
+      <h4>Start from the EU authorised claims list, not your sales rank</h4>
+      <p>Open the EU Register of authorised health claims and find which of your existing formulas map onto a claim already on it. Roughly 222 claims exist, mostly for vitamins, minerals and fatty acids.</p>
+      <p>A Cal-Mag Zinc type formula is a far better first Spanish product than any of your top three, because calcium, magnesium and zinc all carry clean authorised claims you can print without an argument.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">One afternoon</span><span class="tag">Free</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s4b"><div class="stx">
+      <h4>Run the auto-kill checklist</h4>
+      <p>Anything on this list is out before you look further: <b>melatonin at 2 mg or more</b> is a medicine in Spain; <b>ephedra and yohimbe</b> are banned; <b>red yeast rice</b> must stay under 3 mg monacolins; <b>green tea</b> under 800 mg EGCG; <b>NMN, CBD and ashwagandha leaf</b> are unauthorised novel foods.</p>
+      <p>Also check anything <b>animal derived</b> — fish oil, collagen, gelatin capsules, whey, glucosamine. These need veterinary border clearance if imported, which is a good reason to make them in Spain instead.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">Free public lists</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s4c"><div class="stx">
+      <h4>Pick new EU names for what survives</h4>
+      <p>Names that describe the product without promising an outcome. Do this before stage 3's trademark filing so you register the right name once.</p>
+      <div class="tags"><span class="tag who">Jimmy + ES lead</span><span class="tag">Before EUIPO filing</span></div>
+    </div></div>
+  </div>
+
+  <div class="watch">
+    <span class="wl">Why the Spanish shelf looks so boring</span>
+    <b>67% of the Amazon.es bestseller top thirty is magnesium or creatine</b>, and the median price is about €19. That is not a coincidence. Commodity vitamins and minerals dominate because they are the only products whose benefits map to an authorised claim, so they are the only ones anyone can legally advertise. Your US products sell on claims that are illegal there.
+  </div>
+
+  <div class="donebar"><span class="dl">Done when</span><span class="t">Two or three products chosen, names picked, nothing on the auto-kill list.</span></div>
+</div>
+
+<!-- STAGE 5 -->
+<div class="panel" id="p-s5" role="tabpanel" hidden>
+  <div class="stagetop">
+    <div class="stage-h">
+      <div class="meta"><span>Stage 5</span><span class="sep">•</span><span>Weeks 2–12</span><span class="sep">•</span><span>Owner: Jimmy + ES lead</span></div>
+      <h2>Get the product made</h2>
+    </div>
+    <p class="goal">Two ways to get stock into Spain. Send the quote request in week two, compare against the cost of importing, and decide around week eight.</p>
+  </div>
+  <div class="pre ok"><b>Send the RFQ now.</b> You do not need the company formed to ask a lab for a quote.</div>
+
+  <h3 class="sh">The two options</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th></th><th>Make it in Spain</th><th>Ship from Miami</th></tr></thead>
+      <tbody>
+        <tr><td>Customs</td><td style="color:var(--green);font-weight:600">None at all</td><td>EORI, clearance, 12.8% duty on bulk</td></tr>
+        <tr><td>Fish oil, collagen, gelatin</td><td style="color:var(--green);font-weight:600">No problem</td><td>Veterinary border inspection required</td></tr>
+        <tr><td>Formula</td><td style="color:var(--green);font-weight:600">EU-legal from the start</td><td>Must already pass EU rules as-is</td></tr>
+        <tr><td>Label</td><td style="color:var(--green);font-weight:600">Printed correctly first time</td><td>Full relabel or over-label</td></tr>
+        <tr><td>Cash needed</td><td>Inventory buy at the lab minimum</td><td style="color:var(--green);font-weight:600">Lower, uses stock you own</td></tr>
+        <tr><td>Expands to DE, FR, IT</td><td style="color:var(--green);font-weight:600">No extra work</td><td>Same import burden each time</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="color:var(--ink-soft);margin-bottom:26px;font-size:17px"><b>Making it in Spain wins on almost everything.</b> Shipping from Miami only wins if a formula already clears EU rules unchanged and you want to move faster on stock you already own. Run both to the quote stage and decide on real numbers.</p>
+
+  <div class="steps">
+    <div class="step"><input type="checkbox" data-k="s5a"><div class="stx">
+      <h4>Send the quote request to 6–8 labs</h4>
+      <p>Expect three or four useful replies. Spanish labs are generally more flexible on minimums for new brands than Asian ones, and some run very small first batches. Start with Europages filtered to Spain, plus Formulaceutics, Fabricantes de Suplementos, Happy Nutri Lab, Barosa Labs and Avanceutics in Seville.</p>
+      <p>Ask all of them the same questions so the quotes are comparable.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">ES lead reads replies</span><span class="tag">Week 2</span></div>
+      <div class="rfq">
+        <p><b>Asunto:</b> Solicitud de presupuesto, complementos alimenticios marca propia</p>
+        <p>Buenos días,</p>
+        <p>Somos una marca de complementos alimenticios de Estados Unidos y estamos montando una sociedad en España para vender aquí. Queremos fabricar con un laboratorio español y nos gustaría pedirles presupuesto.</p>
+        <p>Les paso lo que necesitamos saber:</p>
+        <ul>
+          <li>Pedido mínimo por referencia, en unidades</li>
+          <li>Precio por unidad a 5.000 y a 10.000 unidades</li>
+          <li>Plazo de entrega desde que se aprueba la fórmula</li>
+          <li>Si pueden igualar una fórmula que ya vendemos en EE. UU., o si hay que reformular para cumplir la normativa europea</li>
+          <li>Si el diseño y la impresión de etiqueta va incluido, y si revisan que las alegaciones cumplan el Reglamento 1924/2006</li>
+          <li>Su número de RGSEAA y las certificaciones que tienen</li>
+          <li>Si nos pueden ayudar con la comunicación de puesta en el mercado</li>
+          <li>Si emiten certificado de análisis de laboratorio acreditado ISO 17025, que nos lo pide Amazon</li>
+        </ul>
+        <p>Les mando las fichas de producto en cuanto me confirmen que les encaja. Gracias.</p>
+      </div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s5b"><div class="stx">
+      <h4>Insist on the ISO 17025 certificate in the quote</h4>
+      <p>Amazon gates the supplements category and asks for a lab certificate of analysis from an accredited lab. If the manufacturer includes it you avoid a separate test at roughly <b>$250 per product</b>. Most will say yes if you ask up front, and it is awkward to add later.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">Ask up front</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s5c"><div class="stx">
+      <h4>Decide: make it or ship it</h4>
+      <p>Compare landed cost per unit both ways against a Spanish shelf where the median price is around €19. The lab minimum sets your inventory budget, which is why the quotes come before the budget.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">Around week 8</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s5d"><div class="stx">
+      <h4>Place the order and lock the formula</h4>
+      <p>Get the claims wording signed off by the lab or a consultant <b>before</b> anything is printed. Changing a label later means re-notifying and reprinting.</p>
+      <div class="tags"><span class="tag who">Jimmy + lab</span><span class="tag">Weeks 8–12</span></div>
+    </div></div>
+  </div>
+
+  <div class="donebar"><span class="dl">Done when</span><span class="t">Order placed, formula locked, delivery date confirmed.</span></div>
+</div>
+
+<!-- STAGE 6 -->
+<div class="panel" id="p-s6" role="tabpanel" hidden>
+  <div class="stagetop">
+    <div class="stage-h">
+      <div class="meta"><span>Stage 6</span><span class="sep">•</span><span>Weeks 10–16</span><span class="sep">•</span><span>Owner: lab + ES lead</span></div>
+      <h2>Label and notify</h2>
+    </div>
+    <p class="goal">Get a legal Spanish label onto the product and tell the authorities it exists. Strictly sequential — you cannot print a label until the company exists to be named on it.</p>
+  </div>
+  <div class="pre"><b>Needs stage 2 and stage 5.</b> The company's name and address are a mandatory part of the label.</div>
+
+  <div class="steps">
+    <div class="step"><input type="checkbox" data-k="s6a"><div class="stx">
+      <h4>Build the Spanish label</h4>
+      <p>It must carry: the words <b>"Complemento Alimenticio"</b>, your S.L.'s name and address, nutrients per recommended daily dose with %NRV, the four mandatory warnings, allergens, lot number and date.</p>
+      <p>Castilian Spanish is the legal minimum. Only claims from the authorised EU list may appear.</p>
+      <div class="tags"><span class="tag who">lab</span><span class="tag">ES lead reviews</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s6b"><div class="stx">
+      <h4>File the AESAN notification</h4>
+      <p>Submit with a copy of the label, on or before the first sale. Made in Spain, this goes to your autonomous community. Costs roughly <b>€60 to €126 per product</b>.</p>
+      <p><b>There is nothing to wait for.</b> You may sell from the moment you file — there is no approval step. But skipping it is a serious offence, so file it.</p>
+      <div class="tags"><span class="tag who">gestoría</span><span class="tag">€60–126 per SKU</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s6c"><div class="stx">
+      <h4>Get the lab certificate on file</h4>
+      <p>The ISO 17025 certificate of analysis. Amazon can ask for it at any time and will suppress the listing while you look for it.</p>
+      <div class="tags"><span class="tag who">lab</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s6d"><div class="stx">
+      <h4>Print and apply the labels</h4>
+      <p>Allocate real time for this. It is the step plans forget, and you already know from the label work with Carina that print plus freight is a multi-week item.</p>
+      <div class="tags"><span class="tag who">lab or printer</span><span class="tag">2–4 weeks</span></div>
+    </div></div>
+  </div>
+
+  <div class="donebar"><span class="dl">Done when</span><span class="t">Labelled stock exists, notification filed, certificate on file.</span></div>
+</div>
+
+<!-- STAGE 7 -->
+<div class="panel" id="p-s7" role="tabpanel" hidden>
+  <div class="stagetop">
+    <div class="stage-h">
+      <div class="meta"><span>Stage 7</span><span class="sep">•</span><span>Weeks 14–18</span><span class="sep">•</span><span>Owner: Jimmy + ES lead</span></div>
+      <h2>Launch on Amazon.es</h2>
+    </div>
+    <p class="goal">List the products and start selling. Everything else has been building to this.</p>
+  </div>
+  <div class="pre"><b>Needs stages 1, 3 and 6.</b> Account verified, ENV number issued, labelled stock in hand.</div>
+
+  <div class="steps">
+    <div class="step"><input type="checkbox" data-k="s7a"><div class="stx">
+      <h4>Load the compliance numbers into Seller Central</h4>
+      <p>The <b>ENV packaging number</b> goes in the seller profile. Without it Amazon suspends the offers. Keep the AESAN filing and the lab certificate to hand.</p>
+      <div class="tags"><span class="tag who">Jimmy</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s7b"><div class="stx">
+      <h4>Write the listing natively in Spanish</h4>
+      <p>Written for Spanish search, not translated from English. Current limits are <b>much tighter than they used to be</b>: title <b>75 characters</b>, bullets 10 to 255 characters each, backend keywords under 250 <b>bytes</b> — accented characters like ñ and á cost two bytes each. There is also a new 125-character Item Highlights field that is indexed for search.</p>
+      <div class="tags"><span class="tag who">ES lead writes</span><span class="tag">Jimmy QAs</span></div>
+      <div class="watch"><span class="wl">Also affects your US listings</span>
+      The 75-character title cap applies globally, not just in Europe. Your existing SEO standard of near-max titles and 350–480 character bullets is now over the limit everywhere. Worth a separate pass across the whole catalog.</div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s7c"><div class="stx">
+      <h4>Put the label information on the detail page</h4>
+      <p>In the EU the product page is legally part of the label. Ingredients, allergens, warnings and the company's address must all appear <b>before checkout</b>, not just on the bottle.</p>
+      <div class="tags"><span class="tag who">ES lead</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s7d"><div class="stx">
+      <h4>Send stock to FBA Spain</h4>
+      <p>€3.74 per unit for a small parcel up to 400g, €4.95 up to 900g. Referral fee is 15% above €10. Skip the Amazon EFN option — it costs €7.05 per unit for the same tax obligations.</p>
+      <div class="tags"><span class="tag who">Jimmy</span></div>
+    </div></div>
+
+    <div class="step"><input type="checkbox" data-k="s7e"><div class="stx">
+      <h4>Set a budget cap before you spend on ads</h4>
+      <p>Decide now what you are willing to lose and what monthly revenue makes Spain worth continuing. Spanish supplements are a pharmacy-led category with a small online share, and no small US brand appears in the Amazon.es top twenty. Write the stop number down.</p>
+      <div class="tags"><span class="tag who">Jimmy</span><span class="tag">Do this first</span></div>
+    </div></div>
+  </div>
+
+  <div class="donebar"><span class="dl">Done when</span><span class="t">Listings live, no suppressed offers, first order shipped.</span></div>
+</div>
+
+<footer>
+  <span>Aura Vitamins LLC &middot; Spain expansion roadmap</span>
+  <span>Progress saved in this browser</span>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var KEY='aura-es-progress-v1';
+  var tabs=document.getElementById('tabs');
+  var btns=[].slice.call(tabs.querySelectorAll('button[role=tab]'));
+  var boxes=[].slice.call(document.querySelectorAll('.step input[type=checkbox]'));
+  var state={};
+
+  try{ state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){ state={}; }
+
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+
+  function stageOf(box){
+    var p=box.closest('.panel');
+    return p?p.id.replace('p-',''):null;
+  }
+
+  function paint(){
+    var total=boxes.length, done=0;
+    var per={};
+    boxes.forEach(function(b){
+      var on=!!state[b.dataset.k];
+      b.checked=on;
+      b.closest('.step').classList.toggle('checked',on);
+      var s=stageOf(b);
+      if(s){ per[s]=per[s]||{d:0,t:0}; per[s].t++; if(on) per[s].d++; }
+      if(on) done++;
+    });
+    var pctv = total? Math.round(done/total*100):0;
+    document.getElementById('pct').textContent=pctv+'%';
+    document.getElementById('barfill').style.width=pctv+'%';
+    document.getElementById('cnt').textContent=done+' of '+total+' done';
+    btns.forEach(function(b){
+      var s=b.dataset.t, st=per[s];
+      b.classList.toggle('done', !!(st && st.t>0 && st.d===st.t));
+    });
+  }
+
+  boxes.forEach(function(b){
+    b.addEventListener('change',function(){
+      if(b.checked) state[b.dataset.k]=1; else delete state[b.dataset.k];
+      save(); paint();
+    });
+  });
+
+  function show(t){
+    btns.forEach(function(b){
+      var on=b.dataset.t===t;
+      b.setAttribute('aria-selected',on?'true':'false');
+    });
+    ['ov','s1','s2','s3','s4','s5','s6','s7'].forEach(function(id){
+      var p=document.getElementById('p-'+id);
+      if(p) p.hidden = (id!==t);
+    });
+    try{ history.replaceState(null,'','#'+t); }catch(e){}
+    window.scrollTo({top:0,behavior:'instant'});
+  }
+
+  btns.forEach(function(b){ b.addEventListener('click',function(){ show(b.dataset.t); }); });
+  [].slice.call(document.querySelectorAll('[data-go]')).forEach(function(el){
+    el.addEventListener('click',function(){ show(el.dataset.go); });
+  });
+
+  tabs.addEventListener('keydown',function(e){
+    var i=btns.indexOf(document.activeElement);
+    if(i<0) return;
+    var n=null;
+    if(e.key==='ArrowRight') n=btns[(i+1)%btns.length];
+    if(e.key==='ArrowLeft') n=btns[(i-1+btns.length)%btns.length];
+    if(n){ e.preventDefault(); n.focus(); show(n.dataset.t); }
+  });
+
+  document.getElementById('rst').addEventListener('click',function(){
+    state={}; save(); paint();
+  });
+
+  var h=(location.hash||'').replace('#','');
+  show(['ov','s1','s2','s3','s4','s5','s6','s7'].indexOf(h)>=0?h:'ov');
+  paint();
+})();
+</script>

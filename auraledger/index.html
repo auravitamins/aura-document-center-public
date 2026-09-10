@@ -373,14 +373,15 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .hero .hp .t{font-size:15px;font-weight:700;color:var(--teal)}
 .hero .hp .d{font-size:13px;color:var(--ink2);margin-top:2px}
 .hero .hr{position:relative;background:var(--gradient-brand)}
-.hero .hr::before{content:"";position:absolute;inset:0;
- background:linear-gradient(90deg,rgba(247,249,252,.92) 0%,rgba(247,249,252,.30) 30%,rgba(247,249,252,0) 62%)}
-.hero .script{position:absolute;left:26px;top:34px;z-index:1}
-.script{font-family:"Snell Roundhand","Segoe Script","Brush Script MT",cursive;color:#fff;
- font-size:31px;line-height:1.3;transform:rotate(-5deg);font-weight:600;
- text-shadow:0 1px 12px rgba(6,51,107,.45)}
-.script .u{display:block;width:118px;height:3px;background:var(--aqua);border-radius:3px;margin:6px 0 0 8px;
- transform:rotate(2deg)}
+.hero .hr::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+ background:linear-gradient(90deg,rgba(247,249,252,.55) 0%,rgba(247,249,252,.10) 14%,rgba(247,249,252,0) 30%)}
+.heroart{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hcap{position:absolute;left:28px;top:32px;z-index:2;max-width:252px}
+/* Inter, not a script face: the brand sheet calls for "Modern. Clean. Readable." */
+.hcap .ht{display:block;font-size:23px;line-height:1.28;font-weight:700;color:#fff;
+ letter-spacing:-.015em;text-shadow:0 1px 14px rgba(6,51,107,.4)}
+.hcap .hu{display:block;width:64px;height:3px;background:var(--aqua);border-radius:3px;margin-top:12px}
+@media(max-width:900px){.hcap{max-width:none} .hcap .ht{font-size:20px}}
 .stack{margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 22px;
  box-shadow:var(--shadow-lg);text-align:center}
 .stack img{height:34px}
@@ -905,7 +906,50 @@ pages.intro = `
     </div>
   </div>
   <div class="hr">
-    <div class="script">Clarity<br>Keeps You<br>Moving<span class="u"></span></div>
+    <svg class="heroart" viewBox="0 0 560 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="alGlow" cx="78%" cy="18%" r="62%">
+          <stop offset="0%" stop-color="#9BF0EA" stop-opacity=".40"/>
+          <stop offset="100%" stop-color="#9BF0EA" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="alCard" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fff" stop-opacity=".20"/>
+          <stop offset="100%" stop-color="#fff" stop-opacity=".07"/>
+        </linearGradient>
+      </defs>
+      <rect width="560" height="300" fill="url(#alGlow)"/>
+      <!-- the ledger: each row is a vendor charge beside what was rebilled -->
+      <g transform="rotate(-3 395 158)">
+        <rect x="255" y="58" width="280" height="200" rx="13"
+              fill="url(#alCard)" stroke="#fff" stroke-opacity=".30"/>
+        <rect x="255" y="58" width="280" height="34" rx="13" fill="#fff" fill-opacity=".10"/>
+        <rect x="255" y="79" width="280" height="13" fill="#fff" fill-opacity=".10"/>
+        <line x1="255" y1="92" x2="535" y2="92" stroke="#fff" stroke-opacity=".28"/>
+        <rect x="274" y="70" width="52" height="7" rx="3.5" fill="#fff" fill-opacity=".55"/>
+        <rect x="410" y="70" width="52" height="7" rx="3.5" fill="#6DDBD4" fill-opacity=".75"/>
+        <g stroke-linecap="round">
+          <rect x="274" y="112" width="76" height="9" rx="4.5" fill="#fff" fill-opacity=".42"/>
+          <rect x="410" y="112" width="76" height="9" rx="4.5" fill="#6DDBD4" fill-opacity=".62"/>
+          <rect x="274" y="144" width="58" height="9" rx="4.5" fill="#fff" fill-opacity=".42"/>
+          <rect x="410" y="144" width="58" height="9" rx="4.5" fill="#6DDBD4" fill-opacity=".62"/>
+          <!-- the one row that does not tie: the whole reason this report exists -->
+          <rect x="274" y="176" width="92" height="9" rx="4.5" fill="#fff" fill-opacity=".42"/>
+          <rect x="410" y="176" width="61" height="9" rx="4.5" fill="#FFD9A3" fill-opacity=".85"/>
+          <circle cx="487" cy="180.5" r="4.5" fill="#FFD9A3" fill-opacity=".95"/>
+          <rect x="274" y="208" width="66" height="9" rx="4.5" fill="#fff" fill-opacity=".42"/>
+          <rect x="410" y="208" width="66" height="9" rx="4.5" fill="#6DDBD4" fill-opacity=".62"/>
+        </g>
+        <line x1="366" y1="104" x2="366" y2="228" stroke="#fff" stroke-opacity=".22" stroke-dasharray="3 5"/>
+      </g>
+      <!-- reconciled -->
+      <g transform="translate(232 196)">
+        <circle r="27" fill="#0B2344" fill-opacity=".30"/>
+        <circle r="27" fill="none" stroke="#6DDBD4" stroke-opacity=".85" stroke-width="2"/>
+        <path d="M-11,1 L-3,10 L12,-9" fill="none" stroke="#6DDBD4" stroke-width="4"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </svg>
+    <div class="hcap"><span class="ht">Turn complex billing<br>into clarity.</span><span class="hu"></span></div>
   </div>
 </div>
 
@@ -2606,6 +2650,8 @@ const ES = {
 "Total — 01/01/2026 through 09/09/2026":"Total — 01/01/2026 al 09/09/2026",
 "No invoice matches that search. Try an invoice number (":"Ninguna factura coincide con esa búsqueda. Pruebe un número de factura (",
 "VIP2Phone bills voice usage in arrears every Monday, so the vendor invoice date is the day after the week it covers. Example: invoice":"VIP2Phone factura el uso de voz por periodo vencido cada lunes, por lo que la fecha de la factura del proveedor es el día siguiente a la semana que cubre. Ejemplo: la factura",
+"Turn complex billing":"Convierta la facturación compleja",
+"into clarity.":"en claridad.",
 "Vendor export":"Exportación del proveedor","QuickBooks export":"Exportación de QuickBooks",
 "Track Today. A Smoother Tomorrow.":"Registre hoy. Un mañana más tranquilo.",
 "Invoice":"Factura","Collected":"Cobrada","Outstanding":"Pendiente de cobro","Unpaid":"Sin pagar","Paid":"Pagada",

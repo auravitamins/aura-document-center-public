@@ -350,7 +350,7 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 /* ---------- hero (intro) ---------- */
 .hero{border-radius:14px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow-lg);
  background:linear-gradient(105deg,#F7F9FC 0%,#EDF6FC 46%,#E4F1F8 100%);position:relative;
- display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);min-height:300px}
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);min-height:344px}
 .hero .hl{padding:26px 40px}
 .herobal{display:flex;flex-wrap:wrap;margin-top:18px;border:1px solid var(--line);
  border-radius:11px;background:#fff;overflow:hidden;width:fit-content;max-width:100%}
@@ -376,12 +376,30 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .hero .hr::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
  background:linear-gradient(90deg,rgba(247,249,252,.55) 0%,rgba(247,249,252,.10) 14%,rgba(247,249,252,0) 30%)}
 .heroart{position:absolute;inset:0;width:100%;height:100%;display:block}
-.hcap{position:absolute;left:28px;top:32px;z-index:2;max-width:252px}
-/* Inter, not a script face: the brand sheet calls for "Modern. Clean. Readable." */
-.hcap .ht{display:block;font-size:23px;line-height:1.28;font-weight:700;color:#fff;
- letter-spacing:-.015em;text-shadow:0 1px 14px rgba(6,51,107,.4)}
-.hcap .hu{display:block;width:64px;height:3px;background:var(--aqua);border-radius:3px;margin-top:12px}
-@media(max-width:900px){.hcap{max-width:none} .hcap .ht{font-size:20px}}
+/* the caption sits over the artwork, clear of the pale wedge on the left */
+.hcap{position:absolute;left:30%;right:6%;top:50%;transform:translateY(-50%);z-index:2}
+.hcap .hk{display:block;font-size:11px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;
+ color:rgba(255,255,255,.82);margin-bottom:10px}
+.hcap .ht{display:block;font-size:34px;line-height:1.16;font-weight:400;color:#fff;
+ letter-spacing:-.018em;text-shadow:0 2px 18px rgba(8,42,80,.34)}
+.hcap .ht b{font-weight:700;color:var(--aqua)}
+.hcap .hu{display:block;width:46px;height:3px;background:var(--aqua);border-radius:3px;margin-top:14px}
+.hfeat{display:flex;margin-top:22px}
+.hfeat>div{display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;
+ padding:0 20px;border-left:1px solid rgba(255,255,255,.26);flex:1 1 0;min-width:0}
+.hfeat>div:first-child{border-left:0;padding-left:0;align-items:flex-start;text-align:left}
+.hfeat svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:1.7;flex:none}
+.hfeat span{font-size:9.5px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;
+ color:rgba(255,255,255,.92);line-height:1.5}
+.hcorner{position:absolute;right:26px;top:24px;z-index:2;text-align:right}
+.hcorner span{display:block;font-size:9.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+ color:rgba(255,255,255,.86);line-height:1.85}
+.hcorner i{display:inline-block;width:40px;height:2px;background:var(--aqua);border-radius:2px;margin-top:9px}
+@media(max-width:900px){
+  .hcap{left:8%;right:8%;top:auto;bottom:26px;transform:none}
+  .hcap .ht{font-size:27px} .hcorner{display:none}
+  .hfeat>div{padding:0 12px}
+}
 .stack{margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 22px;
  box-shadow:var(--shadow-lg);text-align:center}
 .stack img{height:34px}
@@ -906,50 +924,92 @@ pages.intro = `
     </div>
   </div>
   <div class="hr">
-    <svg class="heroart" viewBox="0 0 560 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <svg class="heroart" viewBox="0 0 660 344" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <defs>
-        <radialGradient id="alGlow" cx="78%" cy="18%" r="62%">
-          <stop offset="0%" stop-color="#9BF0EA" stop-opacity=".40"/>
-          <stop offset="100%" stop-color="#9BF0EA" stop-opacity="0"/>
+        <linearGradient id="alBase" x1="0.16" y1="0" x2="1" y2="0.9">
+          <stop offset="0"    stop-color="#2C7594"/>
+          <stop offset="0.30" stop-color="#0B3F72"/>
+          <stop offset="0.60" stop-color="#117E93"/>
+          <stop offset="0.83" stop-color="#22B3AE"/>
+          <stop offset="1"    stop-color="#7DE6D3"/>
+        </linearGradient>
+        <!-- horizontal, so the wedge stays mint top to bottom instead of greying over the navy -->
+        <linearGradient id="alWedge" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0"    stop-color="#F2FCF9" stop-opacity="1"/>
+          <stop offset="0.45" stop-color="#DCF6F0" stop-opacity=".95"/>
+          <stop offset="0.80" stop-color="#A8E7DE" stop-opacity=".45"/>
+          <stop offset="1"    stop-color="#8FE0D8" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="alStreak" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#EAFBF6" stop-opacity=".30"/>
+          <stop offset="1" stop-color="#EAFBF6" stop-opacity=".02"/>
+        </linearGradient>
+        <radialGradient id="alSun" cx="82%" cy="74%" r="42%">
+          <stop offset="0"    stop-color="#F2FDE6" stop-opacity=".92"/>
+          <stop offset="0.40" stop-color="#ABEEDA" stop-opacity=".48"/>
+          <stop offset="1"    stop-color="#ABEEDA" stop-opacity="0"/>
         </radialGradient>
-        <linearGradient id="alCard" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#fff" stop-opacity=".20"/>
-          <stop offset="100%" stop-color="#fff" stop-opacity=".07"/>
+        <linearGradient id="alRoad" x1="0.6" y1="1" x2="0.4" y2="0">
+          <stop offset="0"    stop-color="#F6FEFC" stop-opacity=".62"/>
+          <stop offset="0.55" stop-color="#EAFBF6" stop-opacity=".40"/>
+          <stop offset="1"    stop-color="#DDF7F0" stop-opacity=".10"/>
+        </linearGradient>
+        <linearGradient id="alMark" x1="0" y1="0" x2="0.8" y2="1">
+          <stop offset="0" stop-color="#BFF6EC" stop-opacity=".40"/>
+          <stop offset="1" stop-color="#5FD9CC" stop-opacity=".14"/>
         </linearGradient>
       </defs>
-      <rect width="560" height="300" fill="url(#alGlow)"/>
-      <!-- the ledger: each row is a vendor charge beside what was rebilled -->
-      <g transform="rotate(-3 395 158)">
-        <rect x="255" y="58" width="280" height="200" rx="13"
-              fill="url(#alCard)" stroke="#fff" stroke-opacity=".30"/>
-        <rect x="255" y="58" width="280" height="34" rx="13" fill="#fff" fill-opacity=".10"/>
-        <rect x="255" y="79" width="280" height="13" fill="#fff" fill-opacity=".10"/>
-        <line x1="255" y1="92" x2="535" y2="92" stroke="#fff" stroke-opacity=".28"/>
-        <rect x="274" y="70" width="52" height="7" rx="3.5" fill="#fff" fill-opacity=".55"/>
-        <rect x="410" y="70" width="52" height="7" rx="3.5" fill="#6DDBD4" fill-opacity=".75"/>
-        <g stroke-linecap="round">
-          <rect x="274" y="112" width="76" height="9" rx="4.5" fill="#fff" fill-opacity=".42"/>
-          <rect x="410" y="112" width="76" height="9" rx="4.5" fill="#6DDBD4" fill-opacity=".62"/>
-          <rect x="274" y="144" width="58" height="9" rx="4.5" fill="#fff" fill-opacity=".42"/>
-          <rect x="410" y="144" width="58" height="9" rx="4.5" fill="#6DDBD4" fill-opacity=".62"/>
-          <!-- the one row that does not tie: the whole reason this report exists -->
-          <rect x="274" y="176" width="92" height="9" rx="4.5" fill="#fff" fill-opacity=".42"/>
-          <rect x="410" y="176" width="61" height="9" rx="4.5" fill="#FFD9A3" fill-opacity=".85"/>
-          <circle cx="487" cy="180.5" r="4.5" fill="#FFD9A3" fill-opacity=".95"/>
-          <rect x="274" y="208" width="66" height="9" rx="4.5" fill="#fff" fill-opacity=".42"/>
-          <rect x="410" y="208" width="66" height="9" rx="4.5" fill="#6DDBD4" fill-opacity=".62"/>
-        </g>
-        <line x1="366" y1="104" x2="366" y2="228" stroke="#fff" stroke-opacity=".22" stroke-dasharray="3 5"/>
+
+      <rect width="660" height="344" fill="url(#alBase)"/>
+      <ellipse cx="548" cy="256" rx="258" ry="132" fill="url(#alSun)"/>
+
+      <!-- one pale wedge down the left edge, where the light column hands over to the art -->
+      <polygon points="-60,354 104,354 286,-10 122,-10" fill="url(#alWedge)"/>
+      <!-- two soft light streaks, no more: the reference is calm, not striped -->
+      <polygon points="170,354 224,354 396,-10 342,-10" fill="url(#alStreak)"/>
+      <polygon points="286,354 316,354 470,-10 440,-10" fill="url(#alStreak)" opacity=".55"/>
+
+      <!-- the mark's check, oversized, riding the edge of the wedge -->
+      <g transform="translate(112 58) scale(3.3)">
+        <path d="M37,52 L47,70 L77,27" fill="none" stroke="#BFF6EC" stroke-opacity=".34"
+              stroke-width="16" stroke-linejoin="miter" stroke-linecap="butt"/>
+        <path d="M40,0 L50,0 L66,26 L54,41 L46,26 L21,72 L0,72 Z"
+              fill="none" stroke="#BFF6EC" stroke-opacity=".17" stroke-width="2"/>
       </g>
-      <!-- reconciled -->
-      <g transform="translate(232 196)">
-        <circle r="27" fill="#0B2344" fill-opacity=".30"/>
-        <circle r="27" fill="none" stroke="#6DDBD4" stroke-opacity=".85" stroke-width="2"/>
-        <path d="M-11,1 L-3,10 L12,-9" fill="none" stroke="#6DDBD4" stroke-width="4"
-              stroke-linecap="round" stroke-linejoin="round"/>
-      </g>
+
+      <!-- horizon, low hills, and the road out to it -->
+      <path d="M286,252 H660" stroke="#DCF7F0" stroke-opacity=".22"/>
+      <path d="M392,252 q38,-25 74,-6 q28,-18 58,4 q30,-20 62,3 q26,-13 74,1 v6 H392 Z"
+            fill="#C9F2E7" opacity=".20"/>
+      <path d="M556,252 q30,-14 104,-2 v4 H556 Z" fill="#E8FAF3" opacity=".20"/>
+      <path d="M470,348 C 522,318 548,284 598,251 L606,251
+               C 634,274 692,304 706,348 Z" fill="url(#alRoad)"/>
+      <path d="M470,348 C 522,318 548,284 598,251" fill="none"
+            stroke="#FBFFFE" stroke-opacity=".38" stroke-width="1.6"/>
+      <path d="M706,348 C 692,304 634,274 606,251" fill="none"
+            stroke="#FBFFFE" stroke-opacity=".30" stroke-width="1.6"/>
+      <path d="M588,348 C 604,314 606,278 602,252" fill="none" stroke="#FBFFFE"
+            stroke-opacity=".30" stroke-width="1.6" stroke-dasharray="16 13"/>
     </svg>
-    <div class="hcap"><span class="ht">Turn complex billing<br>into clarity.</span><span class="hu"></span></div>
+
+    <div class="hcorner"><span>Same data.<br>Clearer decisions.</span><i></i></div>
+
+    <div class="hcap">
+      <span class="hk">Financial clarity</span>
+      <span class="ht">Keeps You<br><b>Moving Forward.</b></span>
+      <i class="hu"></i>
+      <div class="hfeat">
+        <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16" stroke-linecap="round"/>
+          <path d="M7 20V13M12 20V8M17 20V4" stroke-linecap="round"/></svg>
+          <span>Reconcile<br>accurately</span></div>
+        <div><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/>
+          <path d="M12 7.4V12l3.2 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Track<br>efficiency</span></div>
+        <div><svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 6l6 6-6 6M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Stay<br>ahead</span></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2650,8 +2710,10 @@ const ES = {
 "Total — 01/01/2026 through 09/09/2026":"Total — 01/01/2026 al 09/09/2026",
 "No invoice matches that search. Try an invoice number (":"Ninguna factura coincide con esa búsqueda. Pruebe un número de factura (",
 "VIP2Phone bills voice usage in arrears every Monday, so the vendor invoice date is the day after the week it covers. Example: invoice":"VIP2Phone factura el uso de voz por periodo vencido cada lunes, por lo que la fecha de la factura del proveedor es el día siguiente a la semana que cubre. Ejemplo: la factura",
-"Turn complex billing":"Convierta la facturación compleja",
-"into clarity.":"en claridad.",
+"Financial clarity":"Claridad financiera","Keeps You":"Lo mantiene","Moving Forward.":"Avanzando.",
+"Same data.":"Los mismos datos.","Clearer decisions.":"Decisiones más claras.",
+"Reconcile":"Concilie","accurately":"con precisión","Track":"Controle","efficiency":"la eficiencia",
+"Stay":"Manténgase","ahead":"adelante",
 "Vendor export":"Exportación del proveedor","QuickBooks export":"Exportación de QuickBooks",
 "Track Today. A Smoother Tomorrow.":"Registre hoy. Un mañana más tranquilo.",
 "Invoice":"Factura","Collected":"Cobrada","Outstanding":"Pendiente de cobro","Unpaid":"Sin pagar","Paid":"Pagada",

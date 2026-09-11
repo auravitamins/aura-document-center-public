@@ -6519,12 +6519,15 @@ function renderBackup(){
    +'<button class="tbtn" onclick="exportShare()">Download a copy instead</button></div>'
    +(live?'<p class="hint" style="margin:0 0 16px">The link to open on your other computer:<br>'
       +'<a class="link" href="'+esc(live)+'" target="_blank" rel="noopener">'+esc(live)+'</a></p>':'')
+   +(g.token?'':'<div class="warnrow">'
+      +'<b>This browser has no token yet.</b> Publishing writes to GitHub, and every browser needs its own '
+      +'token to do that. Paste one into <b>Access token</b> below and publishing starts on its own.</div>')
    +'<div class="fgrid" style="max-width:780px">'
    +'<label class="f"><span>Repository</span><input class="ed" value="'+esc(g.repo)+'" onchange="ghSet(\'repo\',this.value)" placeholder="owner/repo"></label>'
    +'<label class="f"><span>File path</span><input class="ed" value="'+esc(g.path)+'" onchange="ghSet(\'path\',this.value)" placeholder="label-os/index.html"></label>'
    +'<label class="f"><span>Branch</span><input class="ed" value="'+esc(g.branch)+'" onchange="ghSet(\'branch\',this.value)" placeholder="main"></label>'
    +'<label class="f"><span>Access token</span>'
-     +'<input class="ed" type="password" value="" onchange="ghSet(\'token\',this.value)" autocomplete="off" placeholder="'
+     +'<input class="ed" id="ghTok" type="password" value="" onchange="ghSet(\'token\',this.value)" autocomplete="off" placeholder="'
      +(g.token?'saved, leave blank to keep it':'paste a token here')+'"></label>'
    +'</div>'
    +(g.token?'<div class="rowbtns" style="margin-top:10px">'
@@ -8489,7 +8492,10 @@ function ghSet(field,value){
   const g=loadGH();
   if(field==='token'&&value==='')return;          /* blank means keep what is there */
   g[field]=String(value).trim(); saveGH(g);
-  if(field==='token')toast('Token saved in this browser only');
+  if(field==='token'){
+    toast('Token saved in this browser only');
+    if(ghPending){ghPending=false;render();publishToGitHub();return;}
+  }
   render();
 }
 function ghForget(){
@@ -8529,11 +8535,18 @@ function buildSnapshot(){
     return src;
   });
 }
+/* set when Publish was pressed without a token: the paste finishes the job */
+let ghPending=false;
 function publishToGitHub(){
   const g=loadGH();
   if(!g.token){
-    alert('Publishing needs a GitHub token, once per computer.\n\nBackup has a Publishing section that explains how to make one. It stays in this browser.');
-    goto('backup'); return;
+    /* a dialog here was a dead end. Land on the field that fixes it instead. */
+    ghPending=true;
+    goto('backup');
+    const f=$('ghTok');
+    if(f){f.scrollIntoView({block:'center'});setTimeout(()=>f.focus(),60);}
+    toast('Paste a GitHub token here and publishing will carry on');
+    return;
   }
   if(!g.repo||!g.path){toast('Set the repository and path in Backup first');goto('backup');return;}
   const btn=$('pubBtn');

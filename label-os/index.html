@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-qb-installed="true"><head>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AURAPACK</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 
 /* ============================================================
@@ -917,7 +918,7 @@ table.grid td.c,table.grid th.c{text-align:center}
 .money{font-variant-numeric:tabular-nums}
 .void{text-decoration:line-through;color:var(--key4)}
 </style>
-<style data-styled="active" data-styled-version="5.3.11"></style></head>
+</head>
 <body>
 
 <div class="inkbar"><i></i><i></i><i></i><i></i></div>
@@ -926,38 +927,42 @@ table.grid td.c,table.grid th.c{text-align:center}
   <a class="brand" onclick="goto('home')" title="AURAPACK">
     <svg class="mark" viewBox="0 0 46 50" fill="none" aria-hidden="true">
       <defs>
-        <linearGradient id="apTop" x1="6" y1="4" x2="40" y2="24"><stop stop-color="#7C6BF8"></stop><stop offset="1" stop-color="#4F32D6"></stop></linearGradient>
-        <linearGradient id="apLeft" x1="4" y1="14" x2="23" y2="46"><stop stop-color="#2B2270"></stop><stop offset="1" stop-color="#140F3D"></stop></linearGradient>
-        <linearGradient id="apRight" x1="23" y1="26" x2="42" y2="46"><stop stop-color="#FF9A21"></stop><stop offset="1" stop-color="#F57C00"></stop></linearGradient>
+        <linearGradient id="apTop" x1="6" y1="4" x2="40" y2="24"><stop stop-color="#7C6BF8"/><stop offset="1" stop-color="#4F32D6"/></linearGradient>
+        <linearGradient id="apLeft" x1="4" y1="14" x2="23" y2="46"><stop stop-color="#2B2270"/><stop offset="1" stop-color="#140F3D"/></linearGradient>
+        <linearGradient id="apRight" x1="23" y1="26" x2="42" y2="46"><stop stop-color="#FF9A21"/><stop offset="1" stop-color="#F57C00"/></linearGradient>
       </defs>
-      <path d="M23 2 42 13 23 24 4 13z" fill="url(#apTop)"></path>
-      <path d="M4 13 23 24v22L4 35z" fill="url(#apLeft)"></path>
-      <path d="M42 13 23 24v22l19-11z" fill="url(#apRight)"></path>
-      <path d="M9.4 37.6 15.6 24.9l6.2 15.9-3 1.7-3.2-8.6-3.1 5.5z" fill="#fff"></path>
-      <path d="M26.8 27.4 36.4 22v5.2l-4.6 2.6v2.1l4.6-2.6v5.1l-4.6 2.6v4.2l-5 2.9z" fill="#fff" fill-opacity=".97"></path>
+      <path d="M23 2 42 13 23 24 4 13z" fill="url(#apTop)"/>
+      <path d="M4 13 23 24v22L4 35z" fill="url(#apLeft)"/>
+      <path d="M42 13 23 24v22l19-11z" fill="url(#apRight)"/>
+      <path d="M9.4 37.6 15.6 24.9l6.2 15.9-3 1.7-3.2-8.6-3.1 5.5z" fill="#fff"/>
+      <path d="M26.8 27.4 36.4 22v5.2l-4.6 2.6v2.1l4.6-2.6v5.1l-4.6 2.6v4.2l-5 2.9z" fill="#fff" fill-opacity=".97"/>
     </svg>
     <span><b>AURA<i style="font-style:normal;color:#FF8A00">PACK</i></b><em>Procurement &amp; Inventory</em></span>
   </a>
-  <button class="hdrtoggle iconbtn" id="menuBtn" aria-label="Menu" aria-expanded="false" onclick="toggleMenu()"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 6h14M3 10h14M3 14h14"></path></svg></button>
-  <nav class="nav" id="nav"><a class="" onclick="goto('home')" title="Home"><svg class="i" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.6 6.9 8 2.6l5.4 4.3v6.3a.8.8 0 0 1-.8.8H3.4a.8.8 0 0 1-.8-.8z"></path></svg><span>Home</span></a><a class="" onclick="goto('labels')" title="Labels"><svg class="i" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.4 2.7h5.1l4.1 4.1-5.1 5.1-4.1-4.1zM5.6 5h.01"></path></svg><span>Labels</span></a><a class="" onclick="goto('pos')" title="Purchasing"><svg class="i" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.4 2.8h1.5l1.3 7.1h6.6l1.3-5.1H5M6.6 13.1a.85.85 0 1 0 0-1.7.85.85 0 0 0 0 1.7zM11.6 13.1a.85.85 0 1 0 0-1.7.85.85 0 0 0 0 1.7z"></path></svg><span>Purchasing</span></a><a class="" onclick="goto('shipments')" title="Shipments"><svg class="i" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.8 10.8V4.6h7.1v6.2M8.9 6.9h2.5l2.4 2.3v1.6M4.2 12.9a1.05 1.05 0 1 0 0-2.1 1.05 1.05 0 0 0 0 2.1zM11.5 12.9a1.05 1.05 0 1 0 0-2.1 1.05 1.05 0 0 0 0 2.1z"></path></svg><span>Shipments</span></a><a class="" onclick="goto('receiving')" title="Receiving"><svg class="i" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.4 9.2h3l.9 1.6h3.4l.9-1.6h3M2.4 9.2l2-6h7.2l2 6v3.4a.8.8 0 0 1-.8.8H3.2a.8.8 0 0 1-.8-.8z"></path></svg><span>Receiving</span></a><a class="" onclick="goto('stock')" title="Inventory"><svg class="i" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.6 5.2 8 2.6l5.4 2.6L8 7.8zM2.6 5.2v5.6L8 13.4l5.4-2.6V5.2M8 7.8v5.6"></path></svg><span>Inventory</span></a><a class="" onclick="goto('suppliers')" title="Suppliers"><svg class="i" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.1 7.5a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5zM1.9 13.1c0-2.2 1.9-3.6 4.2-3.6s4.2 1.4 4.2 3.6M10.9 3.3a2.2 2.2 0 0 1 0 4.2M12.1 9.8c1.4.4 2.1 1.4 2.1 3.3"></path></svg><span>Suppliers</span></a><a class="" onclick="goto('reports')" title="Reports"><svg class="i" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13.2V8.6M6.3 13.2V3.8M9.7 13.2v-6M13 13.2V5.8"></path></svg><span>Reports</span></a></nav>
+  <button class="hdrtoggle iconbtn" id="menuBtn" aria-label="Menu" aria-expanded="false"
+          onclick="toggleMenu()"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+    stroke-width="1.9" stroke-linecap="round"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button>
+  <nav class="nav" id="nav"></nav>
   <div class="grow"></div>
   <div class="srch">
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M7.2 11.4a4.2 4.2 0 100-8.4 4.2 4.2 0 000 8.4zM10.4 10.4 13.5 13.5"></path></svg>
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M7.2 11.4a4.2 4.2 0 100-8.4 4.2 4.2 0 000 8.4zM10.4 10.4 13.5 13.5"/></svg>
     <input id="search" type="search" placeholder="Search labels, PO, artwork..." oninput="renderRail();if(route.view==='home'||route.view==='labels')renderMain()" aria-label="Search">
-    <kbd>⌘K</kbd>
+    <kbd>&#8984;K</kbd>
   </div>
-  <button class="tbtn key" id="pubBtn" onclick="publishToGitHub()" title="This browser has changes the live link has not seen yet" disabled="">Publishing...</button>
+  <button class="tbtn" id="pubBtn" onclick="publishToGitHub()">Publish</button>
   <button class="tbtn" id="backupBtn" onclick="goto('backup')">Backup</button>
-  <button class="tbtn key" id="newBtn"><svg class="i" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3.2v9.6M3.2 8h9.6"></path></svg>New</button>
-</header><div class="pubbar">Published copy from 2026-09-09. You can click around, but anything you change here stays in your browser.</div>
+  <button class="tbtn key" id="newBtn"></button>
+</header>
 
 <div class="railscrim" id="railScrim" onclick="toggleRail(false)"></div>
 <div class="app" id="shell">
-  <aside id="aside" style="display: none;"><div class="railhead"><h2 id="railTitle">Labels</h2><div class="grow"></div>
-    <span class="hint" id="railCount">6 labels</span>
-    <button class="iconbtn railclose" aria-label="Close list" onclick="toggleRail(false)" style="width:32px;height:32px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"></path></svg></button></div>
+  <aside id="aside"><div class="railhead"><h2 id="railTitle">Labels</h2><div class="grow"></div>
+    <span class="hint" id="railCount"></span>
+    <button class="iconbtn railclose" aria-label="Close list" onclick="toggleRail(false)"
+      style="width:32px;height:32px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"
+      stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
     <div class="jobs" id="rail"></div></aside>
-  <main id="view" style="max-width: none;"></main>
+  <main id="view"></main>
 </div>
 
 <div class="lb" id="lb" onclick="closeLightbox()">
@@ -965,8 +970,8 @@ table.grid td.c,table.grid th.c{text-align:center}
     <span style="flex:1"></span><button onclick="event.stopPropagation();toggleZoom()" id="lbZoom">Zoom in</button>
     <button onclick="event.stopPropagation();closeLightbox()">Close</button></div>
   <img id="lbImg" alt="Full size" onclick="event.stopPropagation();toggleZoom()"></div>
-<div class="toast on" id="toast" role="status" aria-live="polite">Building the page...</div>
-<input type="file" id="filePick" accept="image/*,application/pdf" multiple="" style="display:none">
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="filePick" accept="image/*,application/pdf" multiple style="display:none">
 <input type="file" id="jsonPick" accept=".json" style="display:none">
 
 <script>
@@ -8083,14 +8088,56 @@ function unpublished(){
   if(!state.lastPublished)return true;
   return String(state.lastChange)>String(state.lastPublished);
 }
+/* The page is serialised exactly as it stands on screen, which means every bit
+   of runtime state used to be baked into the published file: the "Published
+   copy from" banner stacked up one per publish, the Publish button froze
+   disabled reading "Publishing...", the toast shipped saying "Building the
+   page...", and any browser extension that had injected nodes published them
+   too. Put the shell back to the state the source ships with, take the copy,
+   then put everything back exactly as it was. */
+/* the body children the source itself ships. <header> carries no id, so this
+   has to match on the tag too, or publishing strips the whole header. */
+const SHELL_KEEP_ID=['railScrim','shell','lb','toast','filePick','jsonPick'];
+const SHELL_KEEP_TAG=['SCRIPT','HEADER'];
+function serialiseCleanShell(){
+  const undo=[];
+  const blank=(id,html)=>{const e=$(id); if(!e)return;
+    const was=e.innerHTML; e.innerHTML=html||''; undo.push(()=>{e.innerHTML=was;});};
+  const attr=(e,name,val)=>{if(!e)return; const was=e.getAttribute(name);
+    if(val==null)e.removeAttribute(name); else e.setAttribute(name,val);
+    undo.push(()=>{was==null?e.removeAttribute(name):e.setAttribute(name,was);});};
+  const lift=e=>{const par=e.parentNode,next=e.nextSibling; par.removeChild(e);
+    undo.push(()=>{par.insertBefore(e,next);});};
+
+  blank('view'); blank('rail'); blank('nav'); blank('newBtn'); blank('railCount'); blank('toast');
+  attr($('toast'),'class','toast');
+  attr($('aside'),'style',null); attr($('view'),'style',null);
+  const pb=$('pubBtn');
+  if(pb){blank('pubBtn','Publish'); attr(pb,'class','tbtn'); attr(pb,'title',null);
+         if(pb.disabled){pb.disabled=false; undo.push(()=>{pb.disabled=true;});}}
+  /* anything in the body that the source did not put there: the banner, and
+     whatever a browser extension has injected into this page */
+  [].slice.call(document.body.children).forEach(e=>{
+    if(SHELL_KEEP_TAG.indexOf(e.tagName)>=0)return;
+    if(SHELL_KEEP_ID.indexOf(e.id)>=0)return;
+    lift(e);
+  });
+  /* extensions stamp the head and the html element too */
+  [].slice.call(document.head.querySelectorAll('style[data-styled],style[data-emotion],link[data-styled]'))
+    .forEach(lift);
+  [].slice.call(document.documentElement.attributes).forEach(a=>{
+    if(a.name!=='lang')attr(document.documentElement,a.name,null);
+  });
+
+  const src='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  undo.reverse().forEach(f=>f());
+  return src;
+}
 /* the exact page that gets published, with every record and image inside it */
 function buildSnapshot(){
   return Promise.all(allImgIds().map(grabImg)).then(pairs=>{
     const blobs={}; pairs.filter(Boolean).forEach(x=>blobs[x[0]]=x[1]);
-    const v=$('view').innerHTML, r=$('rail').innerHTML;
-    $('view').innerHTML=''; $('rail').innerHTML='';   /* also clears anything typed on screen */
-    let src='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
-    $('view').innerHTML=v; $('rail').innerHTML=r;
+    let src=serialiseCleanShell();
     const out=JSON.parse(JSON.stringify(state)); delete out.snapshot;
     const safe=o=>JSON.stringify(o).replace(/<\//g,'<\\/');
     src=src.replace(/\/\*SEED_START\*\/[\s\S]*?\/\*SEED_END\*\//,'/*SEED_START*/const SEED='+safe(out)+';/*SEED_END*/');
@@ -8202,6 +8249,11 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox()});
 /* ---------- boot ---------- */
 state=loadState();
 if(state.migratedFrom==='v2')save(true);
+/* a copy published before the fix above carries a stale banner and a Publish
+   button frozen mid-publish. Clear both before drawing this one. */
+document.querySelectorAll('.pubbar').forEach(b=>b.parentNode.removeChild(b));
+(function(){const pb=document.getElementById('pubBtn');
+  if(pb){pb.disabled=false;pb.innerHTML='Publish';pb.className='tbtn';pb.title='';}})();
 if(SNAPSHOT){
   const bar=document.createElement('div'); bar.className='pubbar';
   bar.textContent='Published copy from '+SNAPSHOT.slice(0,10)+'. You can click around, but anything you change here stays in your browser.';
@@ -8211,5 +8263,5 @@ route={view:'home',id:null,tab:'overview'};
 render();
 seedBlobs().then(()=>{document.querySelectorAll('[data-img]').forEach(e=>{e.dataset.done=''});paintImages();},()=>{});
 </script>
-
-<div id="jsExtensionEmbedder"><div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events: none;"><ol tabindex="-1" class="StyledViewport-sc-1famsgu-1 dLRKDU"></ol></div><div id="jsExtensionMenuParent"></div></div></body></html>
+</body>
+</html>

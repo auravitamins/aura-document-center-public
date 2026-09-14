@@ -884,8 +884,9 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
     <div class="fmain">
       <div class="fbrand"><b>AuraLedger</b> <span class="sep">&middot;</span>
         <span data-i18n>Picallex &amp; VIP2Phone reconciliation for Guildin LLC</span></div>
-      <div class="fmeta" data-build="2026-09-09 · 178 invoice PDFs linked" data-i18n>Build 2026-09-09 · 178 invoice PDFs linked &middot; Covers 01/01/2026 &ndash; 09/09/2026 &middot; extracted 09/09/2026 5:12 PM
-        &middot; unaudited, for internal management use</div>
+      <div class="fmeta" data-build="2026-09-14" data-i18n>Build 2026-09-14 &middot; 178 invoice PDFs linked
+        &middot; call detail checked on 11 of 36 voice weeks (26.5% of billed minutes)
+        &middot; Covers 01/01/2026 &ndash; 09/09/2026 &middot; unaudited, for internal management use</div>
       <nav class="flinks" id="flinks" aria-label="Sections"></nav>
     </div>
     <div class="facts2">
@@ -3150,6 +3151,7 @@ const ES = {
 "Rate":"Tarifa","Amount":"Monto","Invoice":"Factura","Call detail":"Detalle de llamadas",
 "minutes the calls do not show":"minutos que las llamadas no muestran",
 "stated rate vs the calls’ own average":"tarifa declarada vs el promedio real de las llamadas",
+"call detail checked on":"detalle de llamadas revisado en","of billed minutes":"de los minutos facturados",
 "Vendor export":"Exportación del proveedor","QuickBooks export":"Exportación de QuickBooks",
 "Track Today. A Smoother Tomorrow.":"Registre hoy. Un mañana más tranquilo.",
 "Invoice":"Factura","Collected":"Cobrada","Outstanding":"Pendiente de cobro","Unpaid":"Sin pagar","Paid":"Pagada",
@@ -3181,6 +3183,8 @@ const ES = {
 };
 /* phrases built at runtime need patterns, not lookups */
 const ES_PATTERNS = [
+ [/^Build (\S+) · (\d+) invoice PDFs linked · call detail checked on (\d+) of (\d+) voice weeks \(([\d.]+)% of billed minutes\) · Covers (.+) · unaudited, for internal management use$/,
+   m=>`Versión ${m[1]} · ${m[2]} PDF de facturas enlazados · detalle de llamadas revisado en ${m[3]} de ${m[4]} semanas de voz (${m[5]}% de los minutos facturados) · Periodo ${m[6]} · sin auditar, para uso interno de gestión`],
  [/^▼ ([\d,.]+) min · \$([\d,.]+)$/, m=>`▼ ${m[1]} min · $${m[2]}`],
  [/^([\d,.]+) minutes billed that the call detail does not show$/,
    m=>`${m[1]} minutos facturados que el detalle de llamadas no muestra`],

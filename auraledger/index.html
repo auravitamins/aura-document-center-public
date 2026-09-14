@@ -237,9 +237,14 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
  cursor:pointer;color:var(--ink2);display:grid;place-items:center;font-size:17px;line-height:1;flex:none}
 .pdfx:hover{background:var(--tint-slate);color:var(--navy)}
 .pdffacts{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--line);background:#fff;flex:none}
-.pdffacts>div{padding:9px 20px;border-right:1px solid var(--line)}
+.pdffacts>div{display:flex;align-items:flex-start;gap:9px;padding:11px 20px;border-right:1px solid var(--line)}
+.fi{flex:none;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+ border-radius:7px;background:rgba(23,105,170,.09);margin-top:1px}
+.vtile{display:inline-flex;align-items:center;justify-content:center;min-width:46px;height:40px;padding:0 9px;
+ border-radius:10px;background:rgba(23,105,170,.10);color:var(--blue);font-size:12.5px;font-weight:800;
+ letter-spacing:.05em;margin-right:4px;vertical-align:middle}
 .pdffacts>div:last-child{border-right:0}
-.pdffacts .fl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--slate)}
+.pdffacts .fl{font-size:11px;font-weight:700;letter-spacing:.01em;color:var(--slate)}
 .pdffacts .fv{font-size:13px;font-weight:700;color:var(--navy);margin-top:2px;font-variant-numeric:tabular-nums}
 .pdfbody{flex:1 1 auto;min-height:440px;position:relative;background:#EEF1F4}
 .pdfbody iframe{width:100%;height:100%;border:0;display:block}
@@ -427,12 +432,23 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .vbcmph{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--navy);margin-bottom:8px}
 .vbcmph b{font-weight:800}
 .vbcmph span{font-size:11px;color:var(--ink3);font-weight:400}
-.vd{display:flex;gap:11px;align-items:flex-start;padding:12px 14px;border-radius:10px;margin-bottom:14px;
+.vd{display:flex;gap:13px;align-items:flex-start;padding:14px 16px;border-radius:12px;margin-bottom:14px;
  border:1px solid}
+.vd>div{flex:1;min-width:0;display:grid;gap:8px 28px;align-items:start;
+ grid-template-columns:minmax(0,1fr) auto}
+.vd>div>b,.vd>div>p{grid-column:1}
+.vd .vdsplit{grid-column:2;grid-row:1 / span 3;margin-top:2px}
+.vd .vdm{grid-column:1}
+@media(max-width:900px){.vd>div{grid-template-columns:1fr}
+ .vd .vdsplit{grid-column:1;grid-row:auto}}
 .vd>div>b{display:block;font-size:14px;font-weight:800;letter-spacing:-.01em;margin-bottom:3px}
 .vd p b{font-weight:800}
 .vd p{margin:0;font-size:12.5px;line-height:1.55}
-.vd .vdi{flex:none;margin-top:1px}
+.vd .vdi{flex:none;display:inline-flex;align-items:center;justify-content:center;
+ width:34px;height:34px;border-radius:9px;margin-top:1px}
+.vd.good .vdi{background:rgba(6,95,70,.10)}
+.vd.bad .vdi{background:rgba(153,27,27,.10)}
+.vd.part .vdi{background:rgba(146,64,14,.10)}
 .vd .vdm{display:block;font-size:10.5px;margin-top:6px;opacity:.75;font-weight:700;letter-spacing:.03em}
 .vd.good{background:#ECFDF5;border-color:#A7F3D0;color:#065F46}
 .vd.bad{background:#FEF2F2;border-color:#FECACA;color:#991B1B}
@@ -443,19 +459,20 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .vdsplit tr.d td{font-weight:800;border-top:1px solid currentColor;padding-top:5px}
 .vdsplit tr.s td{opacity:.82;font-size:11.5px}
 .covc{width:82px}
-.cov{display:block;height:7px;border-radius:4px;background:rgba(11,35,68,.10);overflow:hidden}
-.cov i{display:block;height:100%;background:#0F766E;border-radius:4px}
+.cov{display:block;height:8px;border-radius:99px;background:rgba(11,35,68,.10);overflow:hidden}
+.cov i{display:block;height:100%;background:#0F766E;border-radius:99px}
 .cov.miss i{background:#B91C1C}
 .vbtbl.cmp th,.vbtbl.cmp td{white-space:nowrap}
-/* one tint for what they billed, another for what the calls show, so a glance
-   tells you which side of the comparison you are reading */
-.vbtbl.cmp .bil{background:rgba(180,83,9,.055)}
-.vbtbl.cmp .usd{background:rgba(13,148,136,.055)}
-.vbtbl.cmp .dif{background:rgba(11,35,68,.035);font-weight:800}
+/* colour stays in the headers: the rows are quiet so the red row and the short bar
+   are the only things that pull the eye */
 .vbtbl.cmp th.bil{color:#92400E}
 .vbtbl.cmp th.usd{color:#0F766E}
-.vbtbl.cmp tr.gap td{background:rgba(185,28,28,.07)}
-.vbtbl.cmp tr.gap td.ty{font-weight:800;color:#991B1B;box-shadow:inset 3px 0 0 #B91C1C;padding-left:11px}
+.vbtbl.cmp .dif{font-weight:800}
+.vbtbl.cmp td{padding-top:10px;padding-bottom:10px}
+.vbtbl.cmp tr.gap td{background:rgba(185,28,28,.055)}
+.vbtbl.cmp tr.gap td.ty{font-weight:800;color:#991B1B;
+ box-shadow:inset 4px 0 0 #B91C1C;padding-left:13px;border-radius:5px 0 0 5px}
+.vbtbl.cmp tr.tot td{background:rgba(23,105,170,.05)}
 .vbtbl.cmp .dn{color:#B91C1C}
 .vbtbl.cmp .up{color:#15803D}
 .vbtbl.cmp .nil{color:var(--ink3);font-weight:400}
@@ -474,9 +491,16 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
 .pdfscroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:#EEF1F4}
 .vbreak{flex:none;padding:14px 20px 16px;background:#FBFDFE;position:relative}
 .pdftabs{display:flex;gap:2px;padding:0 20px;background:#fff;border-bottom:1px solid var(--line);flex:none}
-.pdftabs button{appearance:none;border:0;background:none;font:inherit;font-size:12.5px;font-weight:700;
- color:var(--ink3);padding:10px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.pdftabs{align-items:center}
+.pdftabs button{appearance:none;border:0;font:inherit;font-size:12.5px;font-weight:700;
+ color:var(--ink3);padding:9px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;
+ background:var(--offwhite);border-radius:8px 8px 0 0}
 .pdftabs button:hover{color:var(--navy)}
+.pdftabs button[aria-selected="true"]{background:none}
+.tabrate{margin-left:auto;display:inline-flex;align-items:baseline;gap:9px;padding-right:4px;flex-wrap:wrap}
+.tabrate .bl{font-size:17px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums}
+.tabrate .u{font-size:11.5px;color:var(--ink3);font-weight:600}
+@media(max-width:820px){.tabrate .u{display:none}}
 .pdftabs button[aria-selected="true"]{color:var(--teal);border-bottom-color:var(--teal)}
 .pdftabs button:focus-visible{outline:2px solid var(--teal);outline-offset:-2px;border-radius:4px}
 .pdftabs .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;vertical-align:1px}
@@ -494,10 +518,10 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
 .vbhd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .vbhd .bl{font-size:19px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
 .vbhd .u{font-size:11.5px;color:var(--ink3);font-weight:600}
-.vbhd .cmp{font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px}
-.vbhd .cmp.dn{background:#EAF8F2;color:#15803D}
-.vbhd .cmp.up{background:#FEF3C7;color:#92400E}
-.vbhd .cmp.fl{background:#F1F5F9;color:var(--slate)}
+.vbhd .cmp,.tabrate .cmp{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px}
+.vbhd .cmp.dn,.tabrate .cmp.dn{background:#EAF8F2;color:#15803D}
+.vbhd .cmp.up,.tabrate .cmp.up{background:#FEF3C7;color:#92400E}
+.vbhd .cmp.fl,.tabrate .cmp.fl{background:#F1F5F9;color:var(--slate)}
 .vbscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .vbtbl{width:100%;border-collapse:collapse;font-size:12px;min-width:540px}
 .vbtbl th{text-align:left;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);
@@ -513,8 +537,12 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
 .vbtbl .odd{font-weight:700}
 .vbtbl .odd.hi{color:#B45309}
 .vbtbl .odd.lo{color:#15803D}
-.vbnote{margin:10px 0 0;font-size:11.5px;line-height:1.55;color:var(--ink3)}
+.vbnote{display:flex;gap:10px;align-items:flex-start;margin:12px 0 0;padding:11px 13px;
+ border-radius:10px;background:var(--blue-bg,#EFF6FF);border:1px solid var(--br-blue,#BFDBFE);
+ font-size:11.5px;line-height:1.6;color:var(--ink2)}
 .vbnote b{color:var(--navy)}
+.vbnote>svg{flex:none;margin-top:1px}
+.pdfft .btn{display:inline-flex;align-items:center;gap:7px}
 .vbwarn{margin:10px 0 0;padding:9px 11px;border-radius:8px;background:#FFF7ED;border:1px solid #FED7AA;
  font-size:11.5px;line-height:1.55;color:#7C2D12}
 .vbwarn b{color:#7C2D12}
@@ -813,6 +841,7 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
       <div class="pdftabs" id="pdfTabs" role="tablist" hidden>
         <button type="button" role="tab" id="tabDoc" data-pane="doc">Invoice</button>
         <button type="button" role="tab" id="tabNum" data-pane="num">The numbers</button>
+        <span class="tabrate" id="tabRate"></span>
       </div>
       <div class="pdfscroll">
       <div class="vbreak" id="pdfV" hidden></div>
@@ -831,8 +860,17 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
         <span class="pos" id="pdfPos"></span>
         <span class="pdfhint">&nbsp;<kbd>&larr;</kbd> <kbd>&rarr;</kbd> step &middot; <kbd>Esc</kbd> close</span>
         <span class="sp">
-          <a class="btn" id="pdfDl" target="_blank" rel="noopener">Download</a>
-          <a class="btn primary" id="pdfOpen" target="_blank" rel="noopener">Open in Drive</a>
+          <a class="btn" id="pdfDl" target="_blank" rel="noopener"><svg width="15" height="15"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/>
+            <path d="M7 12l5 5 5-5"/><path d="M4 21h16"/></svg><span>Download</span></a>
+          <a class="btn primary" id="pdfOpen" target="_blank" rel="noopener"><svg width="15" height="15"
+            viewBox="0 0 87.3 78" aria-hidden="true"><path fill="#0066da" d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z"/>
+            <path fill="#00ac47" d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"/>
+            <path fill="#ea4335" d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"/>
+            <path fill="#00832d" d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z"/>
+            <path fill="#2684fc" d="M59.8 53H27.5L13.75 76.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"/>
+            <path fill="#ffba00" d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.8 53h27.45c0-1.55-.4-3.1-1.2-4.5z"/></svg><span>Open in Drive</span></a>
         </span>
       </div>
     </div>
@@ -3651,6 +3689,7 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
     const box=el('pdfV'); if(!box) return;
     const rows = inv && VO.lines[inv];
     if(!rows){ box.hidden=true; box.innerHTML=''; box.style.display='';
+               const rs=document.getElementById('tabRate'); if(rs) rs.innerHTML='';
                const t=document.getElementById('pdfTabs'); if(t) t.hidden=true;
                const b=document.querySelector('.pdfbody'); if(b) b.style.display='';
                return; }
@@ -3724,14 +3763,16 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
       total is right either way, so nothing downstream caught it, but the cost split by traffic type is wrong for
       this week.</div>` : '';
     box.innerHTML = `
-      <div class="vbhd"><span class="bl">${r5(bl)}</span><span class="u">per minute, blended</span>${cmp}</div>
       <div class="vbscroll"><table class="vbtbl${has?" cmp":""}"><thead>${head}</thead><tbody>${body}${foot}</tbody></table></div>
       ${cdrCmp(inv, rows)}
       ${flag}
-      <p class="vbnote">Read from the invoice line items. Minutes &times; rate reproduces every line, and the lines
+      <p class="vbnote">${ic('info',{s:16,c:'var(--blue)'})}<span>Read from the invoice line items. Minutes &times; rate reproduces every line, and the lines
         sum to $${n2(amt)}. <b>The rate is not a contract price</b> &mdash; it moves every week and always equals
         the line amount divided by its minutes, so it is an average the vendor computes, not a price you can hold
-        them to. What is worth checking is the <b>minute count</b>, against Telebrands&rsquo; own pull.</p>`;
+        them to. What is worth checking is the <b>minute count</b>, against Telebrands&rsquo; own pull.</span></p>`;
+    const rateSlot=document.getElementById('tabRate');
+    if(rateSlot) rateSlot.innerHTML =
+      `<span class="bl">${r5(bl)}</span><span class="u">per minute, blended</span>${cmp}`;
     box.hidden=false;
     showTabs(inv);
     if(window.CBes) window.CBes(box);
@@ -3750,16 +3791,18 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
     if(cur<0){ scope=null; scopeLabel=''; list=order; cur=order.indexOf(inv); }
     const c=byInv[inv]||{};
     const vend = p.v==='PCX' ? 'Picallex LLC' : 'VIP2Phone Inc';
-    el('pdfT').innerHTML = `<span class="chip src">${p.v}</span> Invoice ${inv}`
+    el('pdfT').innerHTML = `<span class="vtile">${p.v}</span> Invoice ${inv}`
+      + (c.gstatus ? ` <span class="pill ${c.gstatus==='paid'?'ok':'bad'}"><i class="d"></i>${
+          c.gstatus==='paid'?'Collected':'Outstanding'}</span>` : '')
       + (c.status && c.status!=='Paid' ? ' <span class="pill bad">Unpaid</span>' : '');
     el('pdfS').textContent = vend + (c.date? ' · dated '+dmy(c.date) : '');
     el('pdfA').innerHTML = c.amt!=null
       ? `<b>$${n2(c.amt)}</b><span>${c.cat||''}</span>` : '';
     const facts=[];
-    if(c.period) facts.push(['Service period', c.period]);
-    if(c.qty)    facts.push(['Quantity', c.qty]);
-    if(c.gno)    facts.push(['Rebilled to Telebrands on', 'Invoice '+c.gno]);
-    if(c.gstatus)facts.push(['Client paid?', c.gstatus==='paid'?'Collected':'Outstanding']);
+    if(c.period) facts.push(['cal','Service period', c.period]);
+    if(c.qty)    facts.push(['clock','Quantity', c.qty]);
+    if(c.gno)    facts.push(['file','Rebilled to Telebrands on', 'Invoice '+c.gno]);
+    if(c.gstatus)facts.push(['db','Client paid?', c.gstatus==='paid'?'Collected':'Outstanding']);
     /* if a call-detail file has been checked for this invoice, say so here */
     try{
       const baked=((D.cdr&&D.cdr.weeks)||{})[inv];
@@ -3775,12 +3818,13 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
           if(bad.length) extra=' &mdash; '+bad.map(l=>l.t+' short '+
             n2(l.im-l.fm)+' min').join(', ');
         }
-        facts.push(['Call detail', L[v.state]+' &middot; '+n2(v.fmin)+' min, $'+n2(v.famt)+extra+
+        facts.push(['phone','Call detail', L[v.state]+' &middot; '+n2(v.fmin)+' min, $'+n2(v.famt)+extra+
                     ' <span class="muted">(checked '+v.when+')</span>']);
       }
     }catch(e){}
-    el('pdfF').innerHTML = facts.map(([a,b])=>
-      `<div><div class="fl">${a}</div><div class="fv">${b}</div></div>`).join('');
+    el('pdfF').innerHTML = facts.map(([k,a,b])=>
+      `<div><span class="fi">${ic(k,{s:15,c:'var(--blue)'})}</span>
+        <div><div class="fl">${a}</div><div class="fv">${b}</div></div></div>`).join('');
     renderVoice(inv);
     fall.classList.remove('on');
     el('pdfFallLink').href = 'https://drive.google.com/file/d/'+p.fid+'/view';
@@ -3815,7 +3859,7 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
     let list=activeList();
     cur=list.indexOf(inv);
     if(cur<0){ scope=null; scopeLabel=''; list=order; cur=-1; }
-    el('pdfT').innerHTML = `<span class="chip src">GUILDIN</span> Invoice ${inv}`
+    el('pdfT').innerHTML = `<span class="vtile">GUILDIN</span> Invoice ${inv}`
       + (g.status && g.status!=='paid' ? ' <span class="pill bad">Outstanding</span>'
                                        : ' <span class="pill ok">Collected</span>');
     el('pdfS').textContent = 'Issued by Guildin LLC to Telebrands SAC'
@@ -3828,7 +3872,8 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
       g.covers.map(x=>x.vendor+' '+x.inv+' ($'+n2(x.amt)+')').join(', ')]);
     if(g.memo) f.push(['Description', g.memo.replace(/&/g,'&amp;')]);
     el('pdfF').innerHTML = f.map(([a,b])=>
-      `<div><div class="fl">${a}</div><div class="fv">${b}</div></div>`).join('');
+      `<div><span class="fi">${ic('file',{s:15,c:'var(--blue)'})}</span>
+        <div><div class="fl">${a}</div><div class="fv">${b}</div></div></div>`).join('');
     renderVoice(null);
     fall.classList.remove('on');
     /* its own file when we have one; otherwise the page inside the combined file */

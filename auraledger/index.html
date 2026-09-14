@@ -411,6 +411,19 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .cdrv.ok{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46}
 .cdrv.warn{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E}
 .cdrv.bad{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B}
+.vst{display:inline-block;padding:1px 8px;border-radius:999px;font-size:10.5px;font-weight:800;
+ letter-spacing:.03em;white-space:nowrap}
+.vst.exact{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+.vst.rounding{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE}
+.vst.partial{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A}
+.vst.off{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
+.cdrtick{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;
+ margin-left:6px;border-radius:50%;font-size:9.5px;font-weight:900;vertical-align:middle;cursor:help}
+.cdrtick.ok{background:#D1FAE5;color:#065F46}
+.cdrtick.part{background:#FEF3C7;color:#92400E}
+.cdrtick.off{background:#FEE2E2;color:#991B1B}
+#cdrOut tr.vtot td{font-weight:800;background:var(--surface-alt)}
+#cdrOut td.nowrap{white-space:nowrap}
 /* per-minute breakdown inside the invoice viewer */
 .vbreak{padding:14px 20px 16px;border-bottom:1px solid var(--line);background:#FBFDFE}
 .vbhd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
@@ -3482,6 +3495,16 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
     if(c.qty)    facts.push(['Quantity', c.qty]);
     if(c.gno)    facts.push(['Rebilled to Telebrands on', 'Invoice '+c.gno]);
     if(c.gstatus)facts.push(['Client paid?', c.gstatus==='paid'?'Collected':'Outstanding']);
+    /* if a call-detail file has been checked for this invoice, say so here */
+    try{
+      const v=(JSON.parse(localStorage.getItem('cb_cdr')||'{}'))[inv];
+      if(v){
+        const L={exact:'Confirmed against call detail', rounding:'Minutes confirmed, rate rounding',
+                 partial:'Partially covered ('+v.days+'/7 days)', off:'Call detail does NOT tie'};
+        facts.push(['Call detail', L[v.state]+' &middot; '+n2(v.fmin)+' min, $'+n2(v.famt)+
+                    ' <span class="muted">(checked '+v.when+')</span>']);
+      }
+    }catch(e){}
     el('pdfF').innerHTML = facts.map(([a,b])=>
       `<div><div class="fl">${a}</div><div class="fv">${b}</div></div>`).join('');
     renderVoice(inv);
@@ -3678,6 +3701,29 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
     if(wasEs && window.CBes) window.CBes(document.body);
   })();
   window.CBmarkProse = root => markProse(root);
+
+  /* the ledger is where this gets scanned, so mark the rows that have call detail behind them */
+  function cdrPaint(){
+    let v={};
+    try{ v=JSON.parse(localStorage.getItem('cb_cdr')||'{}'); }catch(e){ return; }
+    document.querySelectorAll('#det tbody tr.det').forEach(tr=>{
+      const cell=tr.children[2]; if(!cell) return;
+      const inv=(cell.textContent||'').trim();
+      const old=cell.querySelector('.cdrtick'); if(old) old.remove();
+      const r=v[inv]; if(!r) return;
+      const T={exact:['\u2713','ok','Confirmed against call detail'],
+               rounding:['\u2713','ok','Minutes confirmed against call detail'],
+               partial:['\u00b7','part',r.days+' of 7 days covered'],
+               off:['!','off','Call detail does not tie']}[r.state];
+      if(!T) return;
+      const b=document.createElement('span');
+      b.className='cdrtick '+T[1]; b.textContent=T[0];
+      b.title=T[2]+' \u00b7 '+n2(r.fmin)+' min, $'+n2(r.famt)+' (checked '+r.when+')';
+      cell.appendChild(b);
+    });
+  }
+  window.CBcdrPaint = cdrPaint;
+  cdrPaint();
   new MutationObserver(muts=>muts.forEach(mu=>mu.addedNodes.forEach(mark)))
     .observe(document.body,{childList:true,subtree:true});
 
@@ -3823,8 +3869,20 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
           iDis=col(/disconnect time/), iDesc=col(/description/), iAcct=col(/account/);
     if(iCh<0||iAmt<0||iCon<0) return fail('That file is missing the connect time, charged time or amount column.');
 
-    let sec=0, amt=0, n=0, skipped=0, roundSec=0, minD=null, maxD=null;
-    const byRate={}, byDest={}, byAcct={};
+    /* the weekly voice invoice is dated the Monday after the week it covers */
+    const VL=(D.voice&&D.voice.lines)||{};
+    const weeks=D.costs.filter(c=>c.cat.indexOf('Voice')===0 && VL[c.inv]).map(c=>{
+      const end=new Date(c.date+'T00:00:00'); end.setDate(end.getDate()-1);
+      const start=new Date(end); start.setDate(start.getDate()-6);
+      return {inv:c.inv, start:start, end:end, lines:VL[c.inv],
+              sec:0, amt:0, n:0, days:{}, acct:{}};
+    }).sort((a,b)=>a.start-b.start);
+    const weekOf=d=>{ for(let i=0;i<weeks.length;i++){
+      const w=weeks[i];
+      if(d>=w.start && d<new Date(w.end.getTime()+86400000)) return w; } return null; };
+
+    let sec=0, amt=0, n=0, skipped=0, roundSec=0, minD=null, maxD=null, orphan=0;
+    const byRate={}, byDest={}, byAcct={}, orphanDays={};
     const bump=(m,k,cs,a)=>{ (m[k]=m[k]||{sec:0,amt:0,n:0}); m[k].sec+=cs; m[k].amt+=a; m[k].n++; };
     for(let r=hi+1;r<rows.length;r++){
       const row=rows[r]; if(!row||row.length<=Math.max(iAmt,iCon)) continue;
@@ -3835,26 +3893,45 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
       if(!maxD||d>maxD) maxD=d;
       const dd=iDis>=0?mdy(row[iDis]):null;
       if(dd) roundSec+=Math.max(0, cs-(dd-d)/1000);
+      const acct=(iAcct>=0?row[iAcct]:'').trim()||'(none)';
       bump(byRate, cs?(Math.round(a/(cs/60)*10000)/10000).toFixed(4):'0.0000', cs, a);
       bump(byDest, (iDesc>=0?row[iDesc]:'').trim()||'(not stated)', cs, a);
-      bump(byAcct, (iAcct>=0?row[iAcct]:'').trim()||'(none)', cs, a);
+      bump(byAcct, acct, cs, a);
+      const w=weekOf(d);
+      if(w){ w.sec+=cs; w.amt+=a; w.n++; w.days[iso(d)]=1;
+             bump(w.acct, acct, cs, a); }
+      else { orphan++; orphanDays[iso(d)]=1; }
     }
     if(!n) return fail('No usable call rows in that file.');
     const mins=sec/60;
+    const hit=weeks.filter(w=>w.n>0);
 
-    /* the weekly voice invoice is dated the Monday after the week it covers */
-    const VL=(D.voice&&D.voice.lines)||{};
-    const weeks=D.costs.filter(c=>c.cat.indexOf('Voice')===0 && VL[c.inv]).map(c=>{
-      const end=new Date(c.date+'T00:00:00'); end.setDate(end.getDate()-1);
-      const start=new Date(end); start.setDate(start.getDate()-6);
-      return {inv:c.inv,start:start,end:end,lines:VL[c.inv]};
-    });
-    const hit=weeks.filter(w=>maxD>=w.start && minD<=new Date(w.end.getTime()+86399000));
-    const days=Math.round((new Date(iso(maxD))-new Date(iso(minD)))/86400000)+1;
+    /* pair each account with the invoice line it matches on minutes, so a renamed
+       trunk does not break the mapping */
+    function pairs(w){
+      const pool=Object.keys(w.acct).map(k=>({k:k,min:w.acct[k].sec/60,amt:w.acct[k].amt}));
+      return w.lines.slice().sort((a,b)=>b[2]-a[2]).map(L=>{
+        let best=null,bd=Infinity;
+        pool.forEach(p=>{ if(p.used) return;
+          const d=Math.abs(p.min-L[2])/Math.max(L[2],1); if(d<bd){bd=d;best=p;} });
+        if(best && bd<0.05){ best.used=true; return {L:L,p:best}; }
+        return {L:L,p:null};
+      });
+    }
+    const wmin=w=>w.lines.reduce((s,l)=>s+l[2],0);
+    const wamt=w=>w.lines.reduce((s,l)=>s+l[4],0);
+    const state=w=>{
+      const dm=w.sec/60-wmin(w), da=w.amt-wamt(w), dc=Object.keys(w.days).length;
+      if(dc<7) return 'partial';
+      if(Math.abs(da)<0.02) return 'exact';
+      if(Math.abs(dm)<=Math.max(1,wmin(w)*0.001)) return 'rounding';
+      return 'off';
+    };
+    const LABEL={exact:'Ties exactly', rounding:'Minutes OK, rate rounding',
+                 partial:'Partial week', off:'Does not tie'};
 
-    let cls='warn', verdict, detail='';
+    let cls='warn', verdict='', detail='';
     if(!hit.length){
-      /* name the week anyway: it is almost always the invoice that has not arrived yet */
       const mon=new Date(minD); mon.setHours(0,0,0,0);
       mon.setDate(mon.getDate()-((mon.getDay()+6)%7));
       const sun=new Date(mon); sun.setDate(sun.getDate()+6);
@@ -3862,88 +3939,76 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
       verdict='These calls sit in the week of '+iso(mon)+' to '+iso(sun)+
               ', which has no invoice on file yet. That week bills on '+iso(bill)+
               ', so keep this file and check it the day the invoice lands.';
-    } else if(hit.length>1){
-      verdict='This file spans '+hit.length+' invoice weeks ('+hit.map(w=>w.inv).join(', ')+
-              '). Split it by week and the comparison becomes line for line.';
     } else {
-      const w=hit[0];
-      const tmin=w.lines.reduce((s,l)=>s+l[2],0), tamt=w.lines.reduce((s,l)=>s+l[4],0);
-      if(days<7){
-        verdict='This covers '+days+' day'+(days===1?'':'s')+' of invoice '+w.inv+
-                ', which bills 7. A partial file can only confirm the days it contains.';
-        detail='<p class="muted" style="font-size:12px;margin-top:8px">Invoice '+w.inv+' bills '+n2(tmin)+
-               ' minutes and $'+n2(tamt)+' for the full week. This file accounts for '+n2(mins)+
-               ' minutes and $'+n2(amt)+', which is '+(mins/tmin*100).toFixed(1)+'% of the minutes.</p>';
-      } else {
-        const da=amt-tamt, dm=mins-tmin;
-        const minsOk = Math.abs(dm) <= Math.max(1, tmin*0.001);   /* 0.1% or a minute */
-        const moneyOk = Math.abs(da) < 0.02;
+      const st=hit.map(state);
+      const nOff=st.filter(x=>x==='off').length, nPart=st.filter(x=>x==='partial').length;
+      const fmin=hit.reduce((s,w)=>s+w.sec/60,0), famt=hit.reduce((s,w)=>s+w.amt,0);
+      const imin=hit.reduce((s,w)=>s+wmin(w),0),  iamt=hit.reduce((s,w)=>s+wamt(w),0);
+      cls = nOff ? 'bad' : (nPart ? 'warn' : 'ok');
+      verdict = hit.length===1
+        ? LABEL[st[0]]+' for invoice '+hit[0].inv+'. '+n2(fmin)+' minutes against '+n2(imin)+
+          ' billed, $'+n2(famt)+' against $'+n2(iamt)+'.'
+        : hit.length+' invoice weeks checked, '+st.filter(x=>x==='exact'||x==='rounding').length+
+          ' with the minutes confirmed'+(nPart?', '+nPart+' still partial':'')+
+          (nOff?', '+nOff+' NOT tying':'')+'. Across all of them the calls carry '+n2(fmin)+
+          ' minutes against '+n2(imin)+' billed, and $'+n2(famt)+' against $'+n2(iamt)+'.';
 
-        /* pair each account in the file with the invoice line it is closest to on minutes,
-           so this does not depend on the vendor keeping the same account labels */
-        const accts=Object.keys(byAcct).map(k=>({k:k, min:byAcct[k].sec/60, amt:byAcct[k].amt}));
-        const lines=w.lines.map(l=>({name:l[0], calls:l[1], min:l[2], rate:l[3], amt:l[4], m:null}));
-        lines.sort((a,b)=>b.min-a.min);
-        lines.forEach(L=>{
-          let best=null, bd=Infinity;
-          accts.forEach(A=>{ if(A.used) return;
-            const d=Math.abs(A.min-L.min)/Math.max(L.min,1);
-            if(d<bd){ bd=d; best=A; } });
-          if(best && bd<0.05){ best.used=true; L.m=best; }
-        });
+      let rws='', net=0;
+      hit.forEach((w,i)=>{
+        const dm=w.sec/60-wmin(w), da=w.amt-wamt(w), dc=Object.keys(w.days).length, s_=st[i];
+        net += wamt(w)-w.amt;
+        rws+='<tr><td>'+w.inv+'</td><td class="nowrap">'+iso(w.start)+' &ndash; '+iso(w.end)+'</td>'+
+          '<td class="n">'+dc+'/7</td>'+
+          '<td class="n">'+n2(w.sec/60)+'</td><td class="n">'+n2(wmin(w))+'</td>'+
+          '<td class="n">'+(Math.abs(dm)<0.005?'&mdash;':(dm>0?'+':'&minus;')+n2(Math.abs(dm)))+'</td>'+
+          '<td class="n">$'+n2(w.amt)+'</td><td class="n">$'+n2(wamt(w))+'</td>'+
+          '<td class="n">'+(Math.abs(da)<0.005?'&mdash;':(da>0?'+$':'&minus;$')+n2(Math.abs(da)))+'</td>'+
+          '<td><span class="vst '+s_+'">'+LABEL[s_]+'</span></td></tr>';
+      });
+      detail='<table><thead><tr><th>Invoice</th><th>Week</th><th class="n">Days</th>'+
+        '<th class="n">File min</th><th class="n">Inv. min</th><th class="n">&Delta;</th>'+
+        '<th class="n">File $</th><th class="n">Inv. $</th><th class="n">&Delta;</th>'+
+        '<th>Verdict</th></tr></thead><tbody>'+rws+
+        (hit.length>1?'<tr class="vtot"><td colspan="3">All '+hit.length+' weeks</td>'+
+          '<td class="n">'+n2(fmin)+'</td><td class="n">'+n2(imin)+'</td>'+
+          '<td class="n">'+(fmin-imin>0?'+':'&minus;')+n2(Math.abs(fmin-imin))+'</td>'+
+          '<td class="n">$'+n2(famt)+'</td><td class="n">$'+n2(iamt)+'</td>'+
+          '<td class="n">'+(famt-iamt>0?'+$':'&minus;$')+n2(Math.abs(famt-iamt))+'</td><td></td></tr>':'')+
+        '</tbody></table>';
 
-        if(moneyOk){
-          cls='ok';
-          verdict='Ties to invoice '+w.inv+'. '+n2(mins)+' minutes and $'+n2(amt)+
-                  ', matching the invoice to the cent.';
-        } else if(minsOk){
-          cls='ok';
-          verdict='Minutes confirmed for invoice '+w.inv+'. The call detail carries '+n2(mins)+
-                  ' minutes against the '+n2(tmin)+' billed, a difference of '+n2(Math.abs(dm))+
-                  ' minute'+(Math.abs(dm)===1?'':'s')+'. The money differs by $'+n2(Math.abs(da))+
-                  (da<0 ? ', with the invoice charging more than the calls add up to.' : '.');
-        } else {
-          cls='bad';
-          verdict='Does not tie to invoice '+w.inv+'. The calls total $'+n2(amt)+' over '+n2(mins)+
-                  ' minutes; the invoice bills $'+n2(tamt)+' over '+n2(tmin)+' minutes, a difference of $'+
-                  n2(Math.abs(da))+' on '+n2(Math.abs(dm))+' minutes.';
-        }
-
-        /* line by line, and where a stated rate is simply the true rate rounded up, say so */
-        let rows='', roundTot=0;
-        lines.forEach(L=>{
-          const a=L.m;
-          const dmin=a?a.min-L.min:null, damt=a?a.amt-L.amt:null;
-          if(a) roundTot += L.amt-a.amt;
-          rows+='<tr><td>'+esc(L.name)+'</td>'+
-            '<td class="n">'+n2(L.min)+'</td>'+
-            '<td class="n">'+(a?n2(a.min):'&mdash;')+'</td>'+
-            '<td class="n">'+(a?(Math.abs(dmin)<0.005?'&mdash;'
-                 :(dmin>0?'+':'&minus;')+n2(Math.abs(dmin))):'&mdash;')+'</td>'+
-            '<td class="n">$'+n2(L.amt)+'</td>'+
-            '<td class="n">'+(a?'$'+n2(a.amt):'&mdash;')+'</td>'+
-            '<td class="n">'+(a?(Math.abs(damt)<0.005?'&mdash;'
-                 :(damt>0?'+$':'&minus;$')+n2(Math.abs(damt))):'&mdash;')+'</td></tr>';
-        });
-        detail='<table><thead><tr><th>Invoice line</th><th class="n">Inv. min</th>'+
-          '<th class="n">File min</th><th class="n">&Delta;</th><th class="n">Inv. $</th>'+
-          '<th class="n">File $</th><th class="n">&Delta;</th></tr></thead><tbody>'+rows+'</tbody></table>';
-
-        const expl=lines.filter(L=>L.m && L.rate && Math.abs(L.m.amt/L.m.min-L.rate)>1e-7)
-          .map(L=>{ const t=L.m.amt/L.m.min;
-            return esc(L.name)+': the calls average $'+t.toFixed(6)+
-                   ' a minute, the invoice states $'+L.rate.toFixed(4)+
-                   ' (' + (L.rate>t?'rounded up':'rounded down') + '), worth '+
-                   (L.rate>t?'+':'&minus;')+'$'+n2(Math.abs(L.amt-L.m.amt));});
-        if(expl.length && Math.abs(roundTot)>=0.01){
-          detail+='<p class="muted" style="font-size:12px;margin-top:10px">'+
-            'Where the money moves and the minutes do not, it is the stated rate: the vendor works out a blended '+
-            'rate, rounds it to four decimals, then multiplies by the minute total instead of adding up what the '+
-            'calls actually cost.<br>'+expl.join('<br>')+
-            '<br><b>Net effect on this invoice: '+(roundTot>=0?'+':'&minus;')+'$'+
-            n2(Math.abs(roundTot))+'.</b></p>';
-        }
+      /* where the minutes are right and the money is not, it is the stated rate */
+      const expl=[];
+      hit.forEach(w=>pairs(w).forEach(({L,p})=>{
+        if(!p||!L[3]||!p.min) return;
+        const t=p.amt/p.min;
+        if(Math.abs(t-L[3])<1e-7) return;
+        expl.push({inv:w.inv, name:L[0], t:t, r:L[3], gap:L[4]-p.amt});
+      }));
+      const up=expl.filter(e=>e.r>e.t).length;
+      if(expl.length && Math.abs(net)>=0.01){
+        detail+='<p class="muted" style="font-size:12px;margin-top:10px">'+
+          'Where the money moves and the minutes do not, it is the stated rate. The vendor works out a blended '+
+          'rate, rounds it to four decimals, then multiplies by the minute total instead of adding up what the '+
+          'calls actually cost. <b>'+up+' of '+expl.length+' lines rounded up</b>, worth '+
+          (net>=0?'+':'&minus;')+'$'+n2(Math.abs(net))+' across '+hit.length+' week'+
+          (hit.length===1?'':'s')+' ('+(Math.abs(net)/iamt*100).toFixed(2)+'% of the billing).'+
+          (expl.length>=6 && up===expl.length
+            ? ' Every line rounding the same way is worth raising.'
+            : (up>expl.length/2 ? ' More often up than down so far.' : ''))+'</p>';
       }
+      if(orphan){
+        detail+='<p class="muted" style="font-size:12px;margin-top:6px">'+orphan.toLocaleString()+
+          ' call'+(orphan===1?'':'s')+' on '+Object.keys(orphanDays).length+
+          ' day(s) fall outside every invoice week on file and were left out of the comparison.</p>';
+      }
+      /* remember it, so section 6 and the viewer can show what has been checked */
+      try{
+        const store=JSON.parse(localStorage.getItem('cb_cdr')||'{}');
+        hit.forEach((w,i)=>{ store[w.inv]={state:st[i], fmin:+(w.sec/60).toFixed(2),
+          famt:+w.amt.toFixed(4), days:Object.keys(w.days).length, when:new Date().toISOString().slice(0,10)}; });
+        localStorage.setItem('cb_cdr', JSON.stringify(store));
+        if(window.CBcdrPaint) window.CBcdrPaint();
+      }catch(e){}
     }
 
     const rk=Object.keys(byRate).sort((a,b)=>parseFloat(b)-parseFloat(a));
@@ -3963,8 +4028,7 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
       '<tr><td>File</td><td class="n">'+esc(name)+'</td></tr>'+
       '<tr><td>Calls read</td><td class="n">'+n.toLocaleString()+
         (skipped?' <span class="muted">('+skipped+' skipped)</span>':'')+'</td></tr>'+
-      '<tr><td>Covers</td><td class="n">'+iso(minD)+' to '+iso(maxD)+' &middot; '+days+
-        ' day'+(days===1?'':'s')+'</td></tr>'+
+      '<tr><td>Covers</td><td class="n">'+iso(minD)+' to '+iso(maxD)+'</td></tr>'+
       '<tr><td>Charged time</td><td class="n"><b>'+n2(mins)+'</b> minutes</td></tr>'+
       '<tr><td>Amount</td><td class="n"><b>$'+n2(amt)+'</b></td></tr>'+
       '<tr><td>Blended rate</td><td class="n">$'+(amt/mins).toFixed(5)+' per minute</td></tr>'+

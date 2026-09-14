@@ -236,12 +236,12 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .pdfx{border:0;background:#fff;border:1px solid var(--lgray);width:32px;height:32px;border-radius:9px;
  cursor:pointer;color:var(--ink2);display:grid;place-items:center;font-size:17px;line-height:1;flex:none}
 .pdfx:hover{background:var(--tint-slate);color:var(--navy)}
-.pdffacts{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--line);background:#fff}
+.pdffacts{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--line);background:#fff;flex:none}
 .pdffacts>div{padding:9px 20px;border-right:1px solid var(--line)}
 .pdffacts>div:last-child{border-right:0}
 .pdffacts .fl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--slate)}
 .pdffacts .fv{font-size:13px;font-weight:700;color:var(--navy);margin-top:2px;font-variant-numeric:tabular-nums}
-.pdfbody{flex:1;min-height:0;position:relative;background:#EEF1F4}
+.pdfbody{flex:1 0 auto;min-height:560px;position:relative;background:#EEF1F4}
 .pdfbody iframe{width:100%;height:100%;border:0;display:block}
 .pdffall{position:absolute;inset:0;display:none;place-content:center;text-align:center;padding:30px}
 .pdffall.on{display:grid}
@@ -441,7 +441,16 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
 #cdrOut tr.vtot td{font-weight:800;background:var(--surface-alt)}
 #cdrOut td.nowrap{white-space:nowrap}
 /* per-minute breakdown inside the invoice viewer */
-.vbreak{padding:14px 20px 16px;border-bottom:1px solid var(--line);background:#FBFDFE}
+.pdfscroll{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;background:#EEF1F4}
+.vbreak{flex:none;padding:14px 20px 16px;border-bottom:1px solid var(--line);background:#FBFDFE;position:relative}
+.vbreak.folded{max-height:none;overflow:visible;padding-bottom:12px}
+.vbreak.folded .vbscroll,.vbreak.folded .vbcmp,.vbreak.folded .vbnote,
+.vbreak.folded .vbwarn{display:none}
+.vbfold{position:absolute;top:12px;right:20px;z-index:3;display:inline-flex;align-items:center;gap:5px;
+ border:1px solid var(--line);background:#fff;color:var(--ink2);border-radius:999px;
+ padding:3px 10px;font:inherit;font-size:10.5px;font-weight:800;letter-spacing:.03em;cursor:pointer}
+.vbfold:hover{border-color:var(--teal);color:var(--teal)}
+.vbfold:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 .vbhd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .vbhd .bl{font-size:19px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
 .vbhd .u{font-size:11.5px;color:var(--ink3);font-weight:600}
@@ -760,6 +769,7 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
         <div class="amt" id="pdfA"></div>
         <button class="pdfx" data-pdfclose aria-label="Close">&times;</button>
       </div>
+      <div class="pdfscroll">
       <div class="pdffacts" id="pdfF"></div>
       <div class="vbreak" id="pdfV" hidden></div>
       <div class="pdfbody">
@@ -769,6 +779,7 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
             Drive folder stays shared with the <b>guildin.com</b> domain, so the PDFs open for anyone signed in on a Guildin account.</p>
             <a class="btn primary" id="pdfFallLink" target="_blank" rel="noopener">Open in Google Drive</a></div>
         </div>
+      </div>
       </div>
       <div class="pdfft">
         <button class="btn" id="pdfPrev">&larr; Previous</button>
@@ -3041,6 +3052,7 @@ const ES = {
 "Every minute on this invoice is accounted for in the call detail.":"Cada minuto de esta factura está respaldado por el detalle de llamadas.",
 "The amounts match to the cent.":"Los montos coinciden al centavo.",
 "The few cents of difference come from the vendor rounding its blended rate to four decimals before multiplying, not from the usage.":"Los pocos centavos de diferencia vienen de que el proveedor redondea su tarifa combinada a cuatro decimales antes de multiplicar, no del consumo.",
+"Hide the numbers":"Ocultar los números","Show the numbers":"Ver los números",
 "Vendor export":"Exportación del proveedor","QuickBooks export":"Exportación de QuickBooks",
 "Track Today. A Smoother Tomorrow.":"Registre hoy. Un mañana más tranquilo.",
 "Invoice":"Factura","Collected":"Cobrada","Outstanding":"Pendiente de cobro","Unpaid":"Sin pagar","Paid":"Pagada",
@@ -3555,6 +3567,7 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
       total is right either way, so nothing downstream caught it, but the cost split by traffic type is wrong for
       this week.</div>` : '';
     box.innerHTML = `
+      <button class="vbfold" type="button" id="vbFold"></button>
       <div class="vbhd"><span class="bl">${r5(bl)}</span><span class="u">per minute, blended</span>${cmp}</div>
       <div class="vbscroll"><table class="vbtbl"><thead><tr>
         <th>Traffic type</th><th class="n">Calls</th><th class="n">Minutes</th>
@@ -3571,6 +3584,25 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
         sum to $${n2(amt)}. <b>The rate is not a contract price</b> &mdash; it moves every week and always equals
         the line amount divided by its minutes, so it is an average the vendor computes, not a price you can hold
         them to. What is worth checking is the <b>minute count</b>, against Telebrands&rsquo; own pull.</p>`;
+    const fold=document.getElementById('vbFold');
+    if(fold){
+      const paint=()=>{
+        let f=false;
+        try{ f=localStorage.getItem('cb_vbfold')==='1'; }catch(e){}
+        box.classList.toggle('folded', f);
+        fold.textContent = f ? 'Show the numbers' : 'Hide the numbers';
+        fold.setAttribute('aria-expanded', String(!f));
+      };
+      fold.addEventListener('click',()=>{
+        let f=false;
+        try{ f=localStorage.getItem('cb_vbfold')==='1'; }catch(e){}
+        try{ localStorage.setItem('cb_vbfold', f?'0':'1'); }catch(e){}
+        paint();
+        if(window.CBes) window.CBes(fold);
+      });
+      paint();
+    }
+    if(window.CBes) window.CBes(box);
     box.hidden=false;
     if(window.CBes) window.CBes(box);
   }

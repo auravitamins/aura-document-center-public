@@ -3876,12 +3876,73 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
                ' minutes and $'+n2(amt)+', which is '+(mins/tmin*100).toFixed(1)+'% of the minutes.</p>';
       } else {
         const da=amt-tamt, dm=mins-tmin;
-        cls = Math.abs(da)<0.02 ? 'ok' : 'bad';
-        verdict = cls==='ok'
-          ? 'Ties to invoice '+w.inv+'. '+n2(mins)+' minutes and $'+n2(amt)+', matching the invoice to the cent.'
-          : 'Does not tie to invoice '+w.inv+'. The calls total $'+n2(amt)+' over '+n2(mins)+
-            ' minutes; the invoice bills $'+n2(tamt)+' over '+n2(tmin)+' minutes, a difference of $'+
-            n2(Math.abs(da))+' on '+n2(Math.abs(dm))+' minutes.';
+        const minsOk = Math.abs(dm) <= Math.max(1, tmin*0.001);   /* 0.1% or a minute */
+        const moneyOk = Math.abs(da) < 0.02;
+
+        /* pair each account in the file with the invoice line it is closest to on minutes,
+           so this does not depend on the vendor keeping the same account labels */
+        const accts=Object.keys(byAcct).map(k=>({k:k, min:byAcct[k].sec/60, amt:byAcct[k].amt}));
+        const lines=w.lines.map(l=>({name:l[0], calls:l[1], min:l[2], rate:l[3], amt:l[4], m:null}));
+        lines.sort((a,b)=>b.min-a.min);
+        lines.forEach(L=>{
+          let best=null, bd=Infinity;
+          accts.forEach(A=>{ if(A.used) return;
+            const d=Math.abs(A.min-L.min)/Math.max(L.min,1);
+            if(d<bd){ bd=d; best=A; } });
+          if(best && bd<0.05){ best.used=true; L.m=best; }
+        });
+
+        if(moneyOk){
+          cls='ok';
+          verdict='Ties to invoice '+w.inv+'. '+n2(mins)+' minutes and $'+n2(amt)+
+                  ', matching the invoice to the cent.';
+        } else if(minsOk){
+          cls='ok';
+          verdict='Minutes confirmed for invoice '+w.inv+'. The call detail carries '+n2(mins)+
+                  ' minutes against the '+n2(tmin)+' billed, a difference of '+n2(Math.abs(dm))+
+                  ' minute'+(Math.abs(dm)===1?'':'s')+'. The money differs by $'+n2(Math.abs(da))+
+                  (da<0 ? ', with the invoice charging more than the calls add up to.' : '.');
+        } else {
+          cls='bad';
+          verdict='Does not tie to invoice '+w.inv+'. The calls total $'+n2(amt)+' over '+n2(mins)+
+                  ' minutes; the invoice bills $'+n2(tamt)+' over '+n2(tmin)+' minutes, a difference of $'+
+                  n2(Math.abs(da))+' on '+n2(Math.abs(dm))+' minutes.';
+        }
+
+        /* line by line, and where a stated rate is simply the true rate rounded up, say so */
+        let rows='', roundTot=0;
+        lines.forEach(L=>{
+          const a=L.m;
+          const dmin=a?a.min-L.min:null, damt=a?a.amt-L.amt:null;
+          if(a) roundTot += L.amt-a.amt;
+          rows+='<tr><td>'+esc(L.name)+'</td>'+
+            '<td class="n">'+n2(L.min)+'</td>'+
+            '<td class="n">'+(a?n2(a.min):'&mdash;')+'</td>'+
+            '<td class="n">'+(a?(Math.abs(dmin)<0.005?'&mdash;'
+                 :(dmin>0?'+':'&minus;')+n2(Math.abs(dmin))):'&mdash;')+'</td>'+
+            '<td class="n">$'+n2(L.amt)+'</td>'+
+            '<td class="n">'+(a?'$'+n2(a.amt):'&mdash;')+'</td>'+
+            '<td class="n">'+(a?(Math.abs(damt)<0.005?'&mdash;'
+                 :(damt>0?'+$':'&minus;$')+n2(Math.abs(damt))):'&mdash;')+'</td></tr>';
+        });
+        detail='<table><thead><tr><th>Invoice line</th><th class="n">Inv. min</th>'+
+          '<th class="n">File min</th><th class="n">&Delta;</th><th class="n">Inv. $</th>'+
+          '<th class="n">File $</th><th class="n">&Delta;</th></tr></thead><tbody>'+rows+'</tbody></table>';
+
+        const expl=lines.filter(L=>L.m && L.rate && Math.abs(L.m.amt/L.m.min-L.rate)>1e-7)
+          .map(L=>{ const t=L.m.amt/L.m.min;
+            return esc(L.name)+': the calls average $'+t.toFixed(6)+
+                   ' a minute, the invoice states $'+L.rate.toFixed(4)+
+                   ' (' + (L.rate>t?'rounded up':'rounded down') + '), worth '+
+                   (L.rate>t?'+':'&minus;')+'$'+n2(Math.abs(L.amt-L.m.amt));});
+        if(expl.length && Math.abs(roundTot)>=0.01){
+          detail+='<p class="muted" style="font-size:12px;margin-top:10px">'+
+            'Where the money moves and the minutes do not, it is the stated rate: the vendor works out a blended '+
+            'rate, rounds it to four decimals, then multiplies by the minute total instead of adding up what the '+
+            'calls actually cost.<br>'+expl.join('<br>')+
+            '<br><b>Net effect on this invoice: '+(roundTot>=0?'+':'&minus;')+'$'+
+            n2(Math.abs(roundTot))+'.</b></p>';
+        }
       }
     }
 

@@ -423,6 +423,21 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .cdrd.ok{color:#0F766E;background:rgba(13,148,136,.09)}
 .cdrd.off{color:#B91C1C;background:rgba(185,28,28,.09)}
 .cdrd.part{color:#92400E;background:rgba(180,83,9,.11)}
+.vbcmp{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.vbcmph{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--navy);margin-bottom:8px}
+.vbcmph b{font-weight:800}
+.vbcmph span{font-size:11px;color:var(--ink3);font-weight:400}
+.vbtbl.cmp th,.vbtbl.cmp td{white-space:nowrap}
+.vbtbl.cmp tr.gap td{background:rgba(185,28,28,.045)}
+.vbtbl.cmp td.neg{color:#B91C1C;font-weight:800}
+.vbcmpn{font-size:12px;color:var(--ink2);line-height:1.6;margin:9px 0 0}
+.vbcmpn .neg{color:#B91C1C}
+table.cdrsum{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+table.cdrsum th,table.cdrsum td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+table.cdrsum th{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)}
+table.cdrsum td.n,table.cdrsum th.n{text-align:right;font-variant-numeric:tabular-nums}
+table.cdrsum td.neg{color:#B91C1C;font-weight:800}
+table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bottom:0}
 #cdrOut tr.vtot td{font-weight:800;background:var(--surface-alt)}
 #cdrOut td.nowrap{white-space:nowrap}
 /* per-minute breakdown inside the invoice viewer */
@@ -2052,6 +2067,7 @@ ${exceptions.map((c,i)=>{const k=notes[c.inv]; const up=c.delta>0; return `
         Description &middot; Connect time &middot; Disconnect time &middot; Charged time &middot; Amount</span></div>
       <input type="file" id="cdrFile" accept=".csv,text/csv" hidden>
     </div>
+    <div id="cdrBaked"></div>
     <div id="cdrOut" hidden></div>
     <p class="muted" style="font-size:12px">Billing is per second. A file covering only part of a week is fine,
       it says so rather than pretending to confirm the week.</p></div>
@@ -3018,6 +3034,13 @@ const ES = {
 "$0.0168/min blended, 2026":"$0.0168/min combinado, 2026",
 "— it moves every week and always equals the line amount divided by its minutes, so it is an average the vendor computes, not a price you can hold them to. What is worth checking is the":"— se mueve cada semana y siempre es igual al monto de la línea dividido entre sus minutos, así que es un promedio que calcula el proveedor, no un precio que usted pueda exigirle. Lo que sí vale la pena revisar es el",
 ", against Telebrands’ own pull.":", contra la extracción propia de Telebrands.",
+"Billed against used":"Facturado contra usado","Billed min":"Min facturados",
+"Used min":"Min usados","Billed $":"$ facturado","Used $":"$ usado",
+"✓ confirmed":"✓ confirmado","Difference":"Diferencia",
+"Either those calls are missing from the export or they were billed and never made, and only Picallex can say which.":"O esas llamadas faltan en el export o se facturaron sin haberse hecho, y solo Picallex puede decir cuál de las dos.",
+"Every minute on this invoice is accounted for in the call detail.":"Cada minuto de esta factura está respaldado por el detalle de llamadas.",
+"The amounts match to the cent.":"Los montos coinciden al centavo.",
+"The few cents of difference come from the vendor rounding its blended rate to four decimals before multiplying, not from the usage.":"Los pocos centavos de diferencia vienen de que el proveedor redondea su tarifa combinada a cuatro decimales antes de multiplicar, no del consumo.",
 "Vendor export":"Exportación del proveedor","QuickBooks export":"Exportación de QuickBooks",
 "Track Today. A Smoother Tomorrow.":"Registre hoy. Un mañana más tranquilo.",
 "Invoice":"Factura","Collected":"Cobrada","Outstanding":"Pendiente de cobro","Unpaid":"Sin pagar","Paid":"Pagada",
@@ -3049,6 +3072,19 @@ const ES = {
 };
 /* phrases built at runtime need patterns, not lookups */
 const ES_PATTERNS = [
+ [/^Almost all of it is (.+), short ([\d,.]+) minutes; the other lines reconcile\. Either those calls are missing from the export or they were billed and never made, and only Picallex can say which\.$/,
+   m=>`Casi todo es ${m[1]}, con ${m[2]} minutos de menos; las demás líneas cuadran. O esas llamadas faltan en el export o se facturaron sin haberse hecho, y solo Picallex puede decir cuál de las dos.`],
+ [/^([\d,]+) call records · checked (.+)$/, m=>`${m[1]} registros de llamadas · revisado ${m[2]}`],
+ [/^(\d+) call records$/, m=>`${m[1]} registros de llamadas`],
+ [/^· checked (.+)$/, m=>`· revisado ${m[1]}`],
+ [/^(\d+)\/7 days$/, m=>`${m[1]}/7 días`],
+ [/^▼ ([\d,.]+) min · \$([\d,.]+)$/, m=>`▼ ${m[1]} min · $${m[2]}`],
+ [/^The invoice bills ([\d,.]+) minutes the call detail does not account for, worth \$([\d,.]+)\.$/,
+   m=>`La factura cobra ${m[1]} minutos que el detalle de llamadas no respalda, por $${m[2]}.`],
+ [/^Almost all of it is (.+), short ([\d,.]+) minutes; the other lines reconcile\.$/,
+   m=>`Casi todo es ${m[1]}, con ${m[2]} minutos de menos; las demás líneas cuadran.`],
+ [/^The call detail covers only (\d+) of the 7 days this week bills, so it can neither confirm nor contradict the invoice yet\.$/,
+   m=>`El detalle de llamadas cubre solo ${m[1]} de los 7 días que cobra esta semana, así que todavía no puede confirmar ni contradecir la factura.`],
  [/^([\d,]+) minutes$/, m=>`${m[1]} minutos`],
  [/^Read from the invoice line items\. Minutes × rate reproduces every line, and the lines sum to (\$[\d,.]+)\.$/,
    m=>`Leído de las líneas de la factura. Minutos × tarifa reproduce cada línea, y las líneas suman ${m[1]}.`],
@@ -3426,6 +3462,58 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
      moved, and whether this week is dearer per minute than the recent run. */
   const VO = D.voice || {lines:{},bands:{},trail:{},blend:{},flags:{}};
   const r5 = v => '$'+v.toFixed(4);
+  /* what they billed against what the call detail actually shows */
+  function cdrCmp(inv, rows){
+    const v=((D.cdr&&D.cdr.weeks)||{})[inv];
+    if(!v||!v.lines||!v.lines.length) return '';
+    const by={}; v.lines.forEach(l=>by[l.t]=l);
+    let im=0,fm=0,ia=0,fa=0,body='';
+    rows.forEach(r=>{
+      const l=by[r[0]]; if(!l) return;
+      im+=l.im; fm+=l.fm; ia+=l.ia; fa+=l.fa;
+      const dm=l.fm-l.im, da=l.fa-l.ia;
+      const gap=Math.abs(dm)>Math.max(1,l.im*0.001);
+      body+=`<tr${gap?' class="gap"':''}><td class="ty">${l.t}</td>
+        <td class="n">${n2(l.im)}</td><td class="n">${n2(l.fm)}</td>
+        <td class="n${gap?' neg':''}">${Math.abs(dm)<0.005?'&mdash;':(dm>0?'+':'&minus;')+n2(Math.abs(dm))}</td>
+        <td class="n">$${n2(l.ia)}</td><td class="n">$${n2(l.fa)}</td>
+        <td class="n${gap?' neg':''}">${Math.abs(da)<0.005?'&mdash;':(da>0?'+$':'&minus;$')+n2(Math.abs(da))}</td></tr>`;
+    });
+    const dm=fm-im, da=fa-ia;
+    const partial = v.state==='partial';
+    const short = v.state==='off';
+    const worst = v.lines.map(l=>({t:l.t,d:l.im-l.fm}))
+                    .sort((a,b)=>b.d-a.d)[0];
+    const verdict = partial
+      ? `The call detail covers only ${v.days} of the 7 days this week bills, so it can neither
+         confirm nor contradict the invoice yet.`
+      : short
+      ? `<b class="neg">The invoice bills ${n2(Math.abs(dm))} minutes the call detail does not account
+         for, worth $${n2(Math.abs(da))}.</b>${worst && worst.d>1
+           ? ` Almost all of it is ${worst.t}, short ${n2(worst.d)} minutes; the other lines reconcile.`:''}
+         Either those calls are missing from the export or they were billed and never made, and only
+         Picallex can say which.`
+      : `Every minute on this invoice is accounted for in the call detail. ${
+         Math.abs(da)<0.005
+           ? 'The amounts match to the cent.'
+           : 'The few cents of difference come from the vendor rounding its blended rate to four '
+             + 'decimals before multiplying, not from the usage.'}`;
+    return `<div class="vbcmp">
+      <div class="vbcmph">${ic(short?'alert':'check',{s:15})}<b>Billed against used</b>
+        <span>${v.calls?v.calls.toLocaleString('en-US')+' call records':''}${
+          v.when?' &middot; checked '+v.when:''}</span></div>
+      <div class="vbscroll"><table class="vbtbl cmp"><thead><tr>
+        <th>Traffic type</th><th class="n">Billed min</th><th class="n">Used min</th><th class="n">Difference</th>
+        <th class="n">Billed $</th><th class="n">Used $</th><th class="n">Difference</th>
+      </tr></thead><tbody>${body}
+      <tr class="tot"><td>Total</td><td class="n">${n2(im)}</td><td class="n">${n2(fm)}</td>
+        <td class="n${short?' neg':''}">${Math.abs(dm)<0.005?'&mdash;':(dm>0?'+':'&minus;')+n2(Math.abs(dm))}</td>
+        <td class="n">$${n2(ia)}</td><td class="n">$${n2(fa)}</td>
+        <td class="n${short?' neg':''}">${Math.abs(da)<0.005?'&mdash;':(da>0?'+$':'&minus;$')+n2(Math.abs(da))}</td></tr>
+      </tbody></table></div>
+      <p class="vbcmpn">${verdict}</p></div>`;
+  }
+
   function renderVoice(inv){
     const box=el('pdfV'); if(!box) return;
     const rows = inv && VO.lines[inv];
@@ -3478,6 +3566,7 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
         <td class="n">$${n2(amt)}</td><td class="n">100.0%</td></tr>
       </tbody></table></div>
       ${flag}
+      ${cdrCmp(inv, rows)}
       <p class="vbnote">Read from the invoice line items. Minutes &times; rate reproduces every line, and the lines
         sum to $${n2(amt)}. <b>The rate is not a contract price</b> &mdash; it moves every week and always equals
         the line amount divided by its minutes, so it is an average the vendor computes, not a price you can hold
@@ -3736,20 +3825,23 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
       const r=v[q.dataset.inv]; if(!r) return;
       const imin=(r.lines||[]).reduce((s,l)=>s+l.im,0);
       const short=imin-r.fmin;
+      const iamt=(r.lines||[]).reduce((s,l)=>s+l.ia,0);
       let cls,txt,tip;
       if(r.state==='partial'){
         cls='part'; txt=r.days+'/7 days';
-        tip='The call detail only covers '+r.days+' of the 7 days this invoice bills.';
+        tip='The call detail only covers '+r.days+' of the 7 days this invoice bills, '+
+            'so this week cannot be confirmed either way yet.';
       } else if(r.state==='off'){
         const worst=(r.lines||[]).map(l=>({t:l.t,d:l.im-l.fm}))
                     .sort((x,y)=>y.d-x.d)[0];
-        cls='off'; txt='\u25bc '+n2(Math.abs(short))+' short';
-        tip=(worst?worst.t+' is short '+n2(worst.d)+' minutes. ':'')+
-            'Call detail carries '+n2(r.fmin)+' minutes against '+n2(imin)+' billed.';
+        cls='off'; txt='\u25bc '+n2(Math.abs(short))+' min \u00b7 $'+n2(Math.abs(iamt-r.famt));
+        tip='Billed for '+n2(imin)+' minutes, call detail only accounts for '+n2(r.fmin)+
+            '. '+(worst?'Nearly all of it is '+worst.t+', short '+n2(worst.d)+' minutes. ':'')+
+            'Worth $'+n2(Math.abs(iamt-r.famt))+' on this invoice.';
       } else {
-        cls='ok'; txt='\u2713 detail';
-        tip='Confirmed against '+(r.calls?r.calls.toLocaleString()+' ':'')+
-            'call records: '+n2(r.fmin)+' minutes against '+n2(imin)+' billed.';
+        cls='ok'; txt='\u2713 confirmed';
+        tip='Minutes confirmed against '+(r.calls?r.calls.toLocaleString()+' ':'')+
+            'call records: '+n2(r.fmin)+' used against '+n2(imin)+' billed.';
       }
       const b=document.createElement('span');
       b.className='cdrd '+cls; b.textContent=txt; b.title=tip+' (checked '+r.when+')';
@@ -4074,6 +4166,59 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
       (ak.length>1 ? tbl('Account', ak, byAcct, k=>k) : '');
     if(window.CBes) window.CBes(out);
   }
+
+  /* what has already been checked, drawn on load. Dropping a file adds to it rather
+     than being the only way to ever see it. */
+  (function(){
+    const host=document.getElementById('cdrBaked'); if(!host) return;
+    const W=(D.cdr&&D.cdr.weeks)||{};
+    const invs=Object.keys(W); if(!invs.length) return;
+    const VL=(D.voice&&D.voice.lines)||{};
+    const meta={};
+    D.costs.forEach(c=>{ if(W[c.inv]){
+      const e=new Date(c.date+'T00:00:00'); e.setDate(e.getDate()-1);
+      const st=new Date(e); st.setDate(st.getDate()-6);
+      meta[c.inv]={start:iso(st), end:iso(e)}; }});
+    invs.sort((a,b)=>(meta[a]?meta[a].start:'').localeCompare(meta[b]?meta[b].start:''));
+    const LBL={exact:'Ties exactly', rounding:'Minutes confirmed', partial:'Partial week',
+               off:'Does not tie'};
+    let rows='', F={fm:0,im:0,fa:0,ia:0}, gaps=[];
+    invs.forEach(k=>{
+      const w=W[k], im=(w.lines||[]).reduce((s,l)=>s+l.im,0),
+            ia=(w.lines||[]).reduce((s,l)=>s+l.ia,0);
+      const dm=w.fmin-im, da=w.famt-ia;
+      if(w.state!=='partial'){ F.fm+=w.fmin; F.im+=im; F.fa+=w.famt; F.ia+=ia; }
+      if(w.state==='off') (w.lines||[]).forEach(l=>{
+        if(l.im-l.fm>Math.max(1,l.im*0.001)) gaps.push({inv:k,t:l.t,d:l.im-l.fm,$:l.ia-l.fa}); });
+      rows+='<tr><td class="mono">'+k+'</td><td class="nowrap">'+
+        (meta[k]?meta[k].start+' &ndash; '+meta[k].end:'')+'</td>'+
+        '<td class="n">'+w.days+'/7</td><td class="n">'+(w.calls||0).toLocaleString('en-US')+'</td>'+
+        '<td class="n">'+n2(im)+'</td><td class="n">'+n2(w.fmin)+'</td>'+
+        '<td class="n'+(w.state==='off'?' neg':'')+'">'+
+          (Math.abs(dm)<0.005?'&mdash;':(dm>0?'+':'&minus;')+n2(Math.abs(dm)))+'</td>'+
+        '<td class="n">$'+n2(ia)+'</td><td class="n">$'+n2(w.famt)+'</td>'+
+        '<td class="n'+(w.state==='off'?' neg':'')+'">'+
+          (Math.abs(da)<0.005?'&mdash;':(da>0?'+$':'&minus;$')+n2(Math.abs(da)))+'</td>'+
+        '<td><span class="vst '+w.state+'">'+LBL[w.state]+'</span></td></tr>';
+    });
+    host.innerHTML='<div class="vbcmph" style="margin-top:14px">'+ic('fileCheck',{s:15,c:'var(--teal)'})+
+      '<b>Weeks already checked</b><span>'+invs.length+' week'+(invs.length===1?'':'s')+
+      (D.cdr.checked?' &middot; '+D.cdr.checked:'')+'</span></div>'+
+      '<div class="tscroll"><table class="cdrsum"><thead><tr><th>Invoice</th><th>Week</th>'+
+      '<th class="n">Days</th><th class="n">Calls</th><th class="n">Billed min</th>'+
+      '<th class="n">Used min</th><th class="n">&Delta;</th><th class="n">Billed $</th>'+
+      '<th class="n">Used $</th><th class="n">&Delta;</th><th>Verdict</th></tr></thead><tbody>'+rows+
+      '<tr class="vtot"><td colspan="4">Complete weeks</td><td class="n">'+n2(F.im)+'</td>'+
+      '<td class="n">'+n2(F.fm)+'</td><td class="n'+(F.fm<F.im-0.5?' neg':'')+'">'+
+        (F.fm-F.im>0?'+':'&minus;')+n2(Math.abs(F.fm-F.im))+'</td>'+
+      '<td class="n">$'+n2(F.ia)+'</td><td class="n">$'+n2(F.fa)+'</td>'+
+      '<td class="n'+(F.fa<F.ia-0.02?' neg':'')+'">'+(F.fa-F.ia>0?'+$':'&minus;$')+
+        n2(Math.abs(F.fa-F.ia))+'</td><td></td></tr></tbody></table></div>'+
+      (gaps.length?'<p class="vbcmpn"><b class="neg">Billed but not in the call detail:</b> '+
+        gaps.map(g=>g.inv+' '+g.t+' '+n2(g.d)+' min ($'+n2(g.$)+')').join(', ')+'.</p>':'');
+    if(window.CBes) window.CBes(host);
+    if(window.CBmarkProse) window.CBmarkProse(host);
+  })();
 
   zone.addEventListener('click',()=>input.click());
   zone.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();input.click();} });

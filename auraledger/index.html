@@ -222,7 +222,7 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .pdfwrap{position:fixed;inset:0;z-index:120;display:none}
 .pdfwrap.on{display:block}
 .pdfback{position:absolute;inset:0;background:rgba(11,35,68,.58);backdrop-filter:blur(3px)}
-.pdfcard{position:absolute;inset:26px;margin:auto;max-width:1080px;max-height:960px;background:#fff;
+.pdfcard{position:absolute;inset:26px;margin:auto;max-width:min(1340px,calc(100vw - 52px));max-height:min(1040px,calc(100vh - 52px));background:#fff;
  border-radius:16px;box-shadow:0 24px 70px rgba(11,35,68,.34);display:flex;flex-direction:column;overflow:hidden}
 .pdfhd{display:flex;align-items:flex-start;gap:16px;padding:16px 20px;border-bottom:1px solid var(--line);
  background:var(--offwhite)}
@@ -241,7 +241,7 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .pdffacts>div:last-child{border-right:0}
 .pdffacts .fl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--slate)}
 .pdffacts .fv{font-size:13px;font-weight:700;color:var(--navy);margin-top:2px;font-variant-numeric:tabular-nums}
-.pdfbody{flex:1 0 auto;min-height:560px;position:relative;background:#EEF1F4}
+.pdfbody{flex:1 1 auto;min-height:440px;position:relative;background:#EEF1F4}
 .pdfbody iframe{width:100%;height:100%;border:0;display:block}
 .pdffall{position:absolute;inset:0;display:none;place-content:center;text-align:center;padding:30px}
 .pdffall.on{display:grid}
@@ -429,7 +429,8 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .vbcmph span{font-size:11px;color:var(--ink3);font-weight:400}
 .vd{display:flex;gap:11px;align-items:flex-start;padding:12px 14px;border-radius:10px;margin-bottom:14px;
  border:1px solid}
-.vd b{display:block;font-size:14px;font-weight:800;letter-spacing:-.01em;margin-bottom:3px}
+.vd>div>b{display:block;font-size:14px;font-weight:800;letter-spacing:-.01em;margin-bottom:3px}
+.vd p b{font-weight:800}
 .vd p{margin:0;font-size:12.5px;line-height:1.55}
 .vd .vdi{flex:none;margin-top:1px}
 .vd .vdm{display:block;font-size:10.5px;margin-top:6px;opacity:.75;font-weight:700;letter-spacing:.03em}
@@ -454,7 +455,7 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .vbtbl.cmp th.bil{color:#92400E}
 .vbtbl.cmp th.usd{color:#0F766E}
 .vbtbl.cmp tr.gap td{background:rgba(185,28,28,.07)}
-.vbtbl.cmp tr.gap td.ty{font-weight:800;color:#991B1B;box-shadow:inset 3px 0 0 #B91C1C}
+.vbtbl.cmp tr.gap td.ty{font-weight:800;color:#991B1B;box-shadow:inset 3px 0 0 #B91C1C;padding-left:11px}
 .vbtbl.cmp .dn{color:#B91C1C}
 .vbtbl.cmp .up{color:#15803D}
 .vbtbl.cmp .nil{color:var(--ink3);font-weight:400}
@@ -470,7 +471,7 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
 #cdrOut tr.vtot td{font-weight:800;background:var(--surface-alt)}
 #cdrOut td.nowrap{white-space:nowrap}
 /* per-minute breakdown inside the invoice viewer */
-.pdfscroll{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;background:#EEF1F4}
+.pdfscroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:#EEF1F4}
 .vbreak{flex:none;padding:14px 20px 16px;background:#FBFDFE;position:relative}
 .pdftabs{display:flex;gap:2px;padding:0 20px;background:#fff;border-bottom:1px solid var(--line);flex:none}
 .pdftabs button{appearance:none;border:0;background:none;font:inherit;font-size:12.5px;font-weight:700;
@@ -3096,6 +3097,21 @@ const ES = {
 "The amounts match to the cent.":"Los montos coinciden al centavo.",
 "The few cents of difference come from the vendor rounding its blended rate to four decimals before multiplying, not from the usage.":"Los pocos centavos de diferencia vienen de que el proveedor redondea su tarifa combinada a cuatro decimales antes de multiplicar, no del consumo.",
 "Invoice":"Factura","The numbers":"Los números","Traffic type":"Tipo de tráfico",
+"Check a call-detail file":"Revisar un archivo de detalle de llamadas",
+"Drop the":"Suelte aquí el","Transaction Detail Records":"Transaction Detail Records",
+"export here. It is read in your browser and nothing is uploaded. AuraLedger totals the charged time and the per-call amounts, works out which invoice week the calls fall in, and compares that against what the vendor billed for the week.":"que exporta el portal. Se lee en su navegador y no se sube nada. AuraLedger suma el tiempo cobrado y los montos por llamada, determina a qué semana de facturación pertenecen y los compara con lo que el proveedor cobró por esa semana.",
+"Choose a CSV":"Elija un CSV","or drop it here":"o suéltelo aquí",
+"Account · From · To · Country · Description · Connect time · Disconnect time · Charged time · Amount":"Account · From · To · Country · Description · Connect time · Disconnect time · Charged time · Amount",
+"Billing is per second. A file covering only part of a week is fine, it says so rather than pretending to confirm the week.":"La facturación es por segundo. Un archivo que cubre solo parte de una semana está bien, lo indica en vez de fingir que confirma la semana.",
+"Weeks already checked":"Semanas ya revisadas","Complete weeks":"Semanas completas",
+"Week":"Semana","Days":"Días","Verdict":"Resultado",
+"Minutes match":"Los minutos coinciden","Minutes and amount match":"Minutos y monto coinciden",
+"Does not tie":"No cuadra","Partial week":"Semana parcial",
+"Billed but not in the call detail:":"Facturado pero ausente del detalle de llamadas:",
+"In the call detail":"En el detalle","Billed min":"Min facturados","Used min":"Min usados",
+"Rate":"Tarifa","Amount":"Monto","Invoice":"Factura","Call detail":"Detalle de llamadas",
+"minutes the calls do not show":"minutos que las llamadas no muestran",
+"stated rate vs the calls’ own average":"tarifa declarada vs el promedio real de las llamadas",
 "Vendor export":"Exportación del proveedor","QuickBooks export":"Exportación de QuickBooks",
 "Track Today. A Smoother Tomorrow.":"Registre hoy. Un mañana más tranquilo.",
 "Invoice":"Factura","Collected":"Cobrada","Outstanding":"Pendiente de cobro","Unpaid":"Sin pagar","Paid":"Pagada",
@@ -3127,6 +3143,23 @@ const ES = {
 };
 /* phrases built at runtime need patterns, not lookups */
 const ES_PATTERNS = [
+ [/^▼ ([\d,.]+) min · \$([\d,.]+)$/, m=>`▼ ${m[1]} min · $${m[2]}`],
+ [/^([\d,.]+) minutes billed that the call detail does not show$/,
+   m=>`${m[1]} minutos facturados que el detalle de llamadas no muestra`],
+ [/^The minutes match: ([\d,.]+) billed, ([\d,.]+) in the call detail$/,
+   m=>`Los minutos coinciden: ${m[1]} facturados, ${m[2]} en el detalle de llamadas`],
+ [/^(\d+) of the 7 days are in the call detail$/,
+   m=>`${m[1]} de los 7 días están en el detalle de llamadas`],
+ [/^This week cannot be checked until the missing days are pulled\.$/,
+   ()=>'Esta semana no se puede revisar hasta descargar los días que faltan.'],
+ [/^accounts for ([\d,.]+) of those minutes, \$([\d,.]+) at the rate on this invoice\. The other lines reconcile\. The call detail is the vendor’s own export for the same week\. Either those calls are missing from it or they were billed and never made\.$/,
+   m=>`aporta ${m[1]} de esos minutos, $${m[2]} a la tarifa de esta factura. Las demás líneas cuadran. El detalle de llamadas es el export del propio proveedor para la misma semana. O esas llamadas faltan en él o se facturaron sin haberse hecho.`],
+ [/^The amounts match to the cent across ([\d,]+) call records\.$/,
+   m=>`Los montos coinciden al centavo en ${m[1]} registros de llamadas.`],
+ [/^The invoice is \$([\d,.]+) (above|below) the sum of the individual call charges\. The vendor states a blended rate to four decimals and multiplies by the minute total, rather than adding up what the calls cost\.$/,
+   m=>`La factura está $${m[1]} ${m[2]==='above'?'por encima':'por debajo'} de la suma de los cargos individuales. El proveedor declara una tarifa combinada a cuatro decimales y la multiplica por el total de minutos, en vez de sumar lo que costaron las llamadas.`],
+ [/^Checked against the vendor’s call detail on (.+)$/, m=>`Revisado contra el detalle de llamadas del proveedor el ${m[1]}`],
+ [/^(.+) ([\d,.]+) min \(\$([\d,.]+)\)[,.]$/, m=>`${m[1]} ${m[2]} min ($${m[3]})${m[0].slice(-1)}`],
  [/^Almost all of it is (.+), short ([\d,.]+) minutes; the other lines reconcile\. Either those calls are missing from the export or they were billed and never made, and only Picallex can say which\.$/,
    m=>`Casi todo es ${m[1]}, con ${m[2]} minutos de menos; las demás líneas cuadran. O esas llamadas faltan en el export o se facturaron sin haberse hecho, y solo Picallex puede decir cuál de las dos.`],
  [/^([\d,]+) call records · checked (.+)$/, m=>`${m[1]} registros de llamadas · revisado ${m[2]}`],

@@ -428,6 +428,7 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .cdrd.ok{color:#0F766E;background:rgba(13,148,136,.09)}
 .cdrd.off{color:#B91C1C;background:rgba(185,28,28,.09)}
 .cdrd.part{color:#92400E;background:rgba(180,83,9,.11)}
+.cdrd.none{color:var(--ink3);background:rgba(11,35,68,.055);font-weight:700}
 .vbcmp{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
 .vbcmph{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--navy);margin-bottom:8px}
 .vbcmph b{font-weight:800}
@@ -3152,6 +3153,7 @@ const ES = {
 "minutes the calls do not show":"minutos que las llamadas no muestran",
 "stated rate vs the calls’ own average":"tarifa declarada vs el promedio real de las llamadas",
 "call detail checked on":"detalle de llamadas revisado en","of billed minutes":"de los minutos facturados",
+"not checked":"sin revisar",
 "Vendor export":"Exportación del proveedor","QuickBooks export":"Exportación de QuickBooks",
 "Track Today. A Smoother Tomorrow.":"Registre hoy. Un mañana más tranquilo.",
 "Invoice":"Factura","Collected":"Cobrada","Outstanding":"Pendiente de cobro","Unpaid":"Sin pagar","Paid":"Pagada",
@@ -4031,9 +4033,22 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
     try{ Object.assign(v, JSON.parse(localStorage.getItem('cb_cdr')||'{}')); }catch(e){}
     /* the check is a statement about the MINUTES, so it sits with the minutes.
        It borrows the table's own idiom for a shortfall rather than inventing one. */
+    const byInv={}; D.costs.forEach(c=>byInv[c.inv]=c);
     document.querySelectorAll('#det .qty').forEach(q=>{
       const old=q.querySelector('.cdrd'); if(old) old.remove();
-      const r=v[q.dataset.inv]; if(!r) return;
+      const r=v[q.dataset.inv];
+      if(!r){
+        /* silence is ambiguous: on a voice week it has to say the detail was never pulled,
+           not leave the reader guessing whether it was checked and found clean */
+        const c=byInv[q.dataset.inv];
+        if(c && c.cat.indexOf('Voice')===0){
+          const b=document.createElement('span');
+          b.className='cdrd none'; b.textContent='not checked';
+          b.title='No call detail on file for this week yet, so the minutes are the vendor\u2019s figure alone.';
+          q.appendChild(b);
+        }
+        return;
+      }
       const imin=(r.lines||[]).reduce((s,l)=>s+l.im,0);
       const short=imin-r.fmin;
       const iamt=(r.lines||[]).reduce((s,l)=>s+l.ia,0);

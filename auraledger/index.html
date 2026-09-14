@@ -429,6 +429,7 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .cdrd.off{color:#B91C1C;background:rgba(185,28,28,.09)}
 .cdrd.part{color:#92400E;background:rgba(180,83,9,.11)}
 .cdrd.none{color:var(--ink3);background:rgba(11,35,68,.055);font-weight:700}
+.cdrd.under{color:#92400E;background:rgba(180,83,9,.12)}
 .vbcmp{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
 .vbcmph{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--navy);margin-bottom:8px}
 .vbcmph b{font-weight:800}
@@ -3154,6 +3155,7 @@ const ES = {
 "stated rate vs the calls’ own average":"tarifa declarada vs el promedio real de las llamadas",
 "call detail checked on":"detalle de llamadas revisado en","of billed minutes":"de los minutos facturados",
 "not checked":"sin revisar",
+"minutes in the call detail that this invoice did not bill":"minutos en el detalle de llamadas que esta factura no cobró",
 "Vendor export":"Exportación del proveedor","QuickBooks export":"Exportación de QuickBooks",
 "Track Today. A Smoother Tomorrow.":"Registre hoy. Un mañana más tranquilo.",
 "Invoice":"Factura","Collected":"Cobrada","Outstanding":"Pendiente de cobro","Unpaid":"Sin pagar","Paid":"Pagada",
@@ -3633,14 +3635,23 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
       head=`${v.days} of the 7 days are in the call detail`;
       sub=`This week cannot be checked until the missing days are pulled.`;
     } else if(v.state==='off'){
-      cls='bad'; icon='alert';
-      head=`${n2(im-fm)} minutes billed that the call detail does not show`;
-      sub=(worst && worst.d>1
-            ? `<b>${worst.t}</b> accounts for ${n2(worst.d)} of those minutes, $${n2(worst.$)} at the
-               rate on this invoice. The other lines reconcile. `
+      const over = im>fm;
+      cls = over?'bad':'part'; icon='alert';
+      const w2 = v.lines.map(l=>({t:l.t, d:over?l.im-l.fm:l.fm-l.im,
+                    $:l.im>0?Math.abs(l.ia-l.fa):0})).sort((a,b)=>b.d-a.d)[0];
+      head = over
+        ? `${n2(im-fm)} minutes billed that the call detail does not show`
+        : `${n2(fm-im)} minutes in the call detail that this invoice did not bill`;
+      sub=(w2 && w2.d>1
+            ? `<b>${w2.t}</b> accounts for ${n2(w2.d)} of them, $${n2(w2.$)}. The other lines
+               reconcile. `
             : '')+
-          `The call detail is the vendor&rsquo;s own export for the same week. Either those calls are
-           missing from it or they were billed and never made.`;
+          (over
+            ? `The call detail is the vendor&rsquo;s own export for the same week. Either those calls
+               are missing from it or they were billed and never made.`
+            : `The usage is real and the vendor did not charge for it. Before treating any nearby
+               week as over-billed, check whether these are the same minutes billed in the wrong
+               week.`);
     } else {
       cls='good'; icon='check';
       head=`The minutes match: ${n2(im)} billed, ${n2(fm)} in the call detail`;
@@ -4058,12 +4069,20 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
         tip='The call detail only covers '+r.days+' of the 7 days this invoice bills, '+
             'so this week cannot be confirmed either way yet.';
       } else if(r.state==='off'){
-        const worst=(r.lines||[]).map(l=>({t:l.t,d:l.im-l.fm}))
+        /* short>0 means the invoice bills MORE than the calls show; short<0 is the opposite,
+           and the two must never render the same way */
+        const over = short>0;
+        const worst=(r.lines||[]).map(l=>({t:l.t,d:over?l.im-l.fm:l.fm-l.im}))
                     .sort((x,y)=>y.d-x.d)[0];
-        cls='off'; txt='\u25bc '+n2(Math.abs(short))+' min \u00b7 $'+n2(Math.abs(iamt-r.famt));
-        tip='Billed for '+n2(imin)+' minutes, call detail only accounts for '+n2(r.fmin)+
-            '. '+(worst?'Nearly all of it is '+worst.t+', short '+n2(worst.d)+' minutes. ':'')+
-            'Worth $'+n2(Math.abs(iamt-r.famt))+' on this invoice.';
+        cls = over?'off':'under';
+        txt = (over?'\u25bc ':'\u25b2 ')+n2(Math.abs(short))+' min \u00b7 $'+n2(Math.abs(iamt-r.famt));
+        tip = over
+          ? 'Billed for '+n2(imin)+' minutes, the call detail accounts for '+n2(r.fmin)+
+            '. The invoice is ABOVE the calls by $'+n2(Math.abs(iamt-r.famt))+'.'+
+            (worst?' Almost all of it is '+worst.t+'.':'')
+          : 'Billed for '+n2(imin)+' minutes, the call detail shows '+n2(r.fmin)+
+            '. The invoice is BELOW the calls by $'+n2(Math.abs(iamt-r.famt))+
+            ', so this week was under-billed.'+(worst?' Almost all of it is '+worst.t+'.':'');
       } else {
         cls='ok'; txt='\u2713 confirmed';
         tip='Minutes confirmed against '+(r.calls?r.calls.toLocaleString()+' ':'')+

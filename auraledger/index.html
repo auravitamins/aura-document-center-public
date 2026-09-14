@@ -417,11 +417,12 @@ tr.hunted td{animation:cbhunt 1.4s ease-in-out 2}
 .vst.rounding{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE}
 .vst.partial{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A}
 .vst.off{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
-.cdrtick{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;
- margin-left:6px;border-radius:50%;font-size:9.5px;font-weight:900;vertical-align:middle;cursor:help}
-.cdrtick.ok{background:#D1FAE5;color:#065F46}
-.cdrtick.part{background:#FEF3C7;color:#92400E}
-.cdrtick.off{background:#FEE2E2;color:#991B1B}
+#det .qty{display:block;font-size:11px;color:var(--ink3);margin-top:2px}
+.cdrd{display:inline-block;margin-left:7px;padding:0 6px;border-radius:4px;font-size:10px;
+ font-weight:800;letter-spacing:.02em;white-space:nowrap;cursor:help;vertical-align:baseline}
+.cdrd.ok{color:#0F766E;background:rgba(13,148,136,.09)}
+.cdrd.off{color:#B91C1C;background:rgba(185,28,28,.09)}
+.cdrd.part{color:#92400E;background:rgba(180,83,9,.11)}
 #cdrOut tr.vtot td{font-weight:800;background:var(--surface-alt)}
 #cdrOut td.nowrap{white-space:nowrap}
 /* per-minute breakdown inside the invoice viewer */
@@ -2156,7 +2157,7 @@ function renderDetail(){
         <td class="mono">${c.inv}</td>
         <td>${c.cat}${zero?' <span class="muted">(bonificado)</span>':''}</td>
         <td><span class="muted">${c.pkind==='week'?'Week of':(c.pkind==='once'?'':'Month of')}</span>
-          ${c.period}${c.qty?`<span style="display:block;font-size:11px;color:var(--ink3);margin-top:2px">${c.qty}</span>`:''}</td>
+          ${c.period}${c.qty?`<span class="qty" data-inv="${c.inv}">${c.qty}</span>`:''}</td>
         <td class="n num">${zero?'<span class="muted">$0.00</span>':'$'+n2(c.amt)}${
           c.amt>0&&c.status!=='Paid'?' <span class="pill bad">Unpaid</span>':''}</td>
         <td class="mono">${c.gno||'<span class="nil">&ndash;</span>'}</td>
@@ -3715,20 +3716,31 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
   function cdrPaint(){
     let v=Object.assign({}, (D.cdr&&D.cdr.weeks)||{});
     try{ Object.assign(v, JSON.parse(localStorage.getItem('cb_cdr')||'{}')); }catch(e){}
-    document.querySelectorAll('#det tbody tr.det').forEach(tr=>{
-      const cell=tr.children[2]; if(!cell) return;
-      const inv=(cell.textContent||'').trim();
-      const old=cell.querySelector('.cdrtick'); if(old) old.remove();
-      const r=v[inv]; if(!r) return;
-      const T={exact:['\u2713','ok','Confirmed against call detail'],
-               rounding:['\u2713','ok','Minutes confirmed against call detail'],
-               partial:['\u00b7','part',r.days+' of 7 days covered'],
-               off:['!','off','Call detail does not tie']}[r.state];
-      if(!T) return;
+    /* the check is a statement about the MINUTES, so it sits with the minutes.
+       It borrows the table's own idiom for a shortfall rather than inventing one. */
+    document.querySelectorAll('#det .qty').forEach(q=>{
+      const old=q.querySelector('.cdrd'); if(old) old.remove();
+      const r=v[q.dataset.inv]; if(!r) return;
+      const imin=(r.lines||[]).reduce((s,l)=>s+l.im,0);
+      const short=imin-r.fmin;
+      let cls,txt,tip;
+      if(r.state==='partial'){
+        cls='part'; txt=r.days+'/7 days';
+        tip='The call detail only covers '+r.days+' of the 7 days this invoice bills.';
+      } else if(r.state==='off'){
+        const worst=(r.lines||[]).map(l=>({t:l.t,d:l.im-l.fm}))
+                    .sort((x,y)=>y.d-x.d)[0];
+        cls='off'; txt='\u25bc '+n2(Math.abs(short))+' short';
+        tip=(worst?worst.t+' is short '+n2(worst.d)+' minutes. ':'')+
+            'Call detail carries '+n2(r.fmin)+' minutes against '+n2(imin)+' billed.';
+      } else {
+        cls='ok'; txt='\u2713 detail';
+        tip='Confirmed against '+(r.calls?r.calls.toLocaleString()+' ':'')+
+            'call records: '+n2(r.fmin)+' minutes against '+n2(imin)+' billed.';
+      }
       const b=document.createElement('span');
-      b.className='cdrtick '+T[1]; b.textContent=T[0];
-      b.title=T[2]+' \u00b7 '+n2(r.fmin)+' min, $'+n2(r.famt)+' (checked '+r.when+')';
-      cell.appendChild(b);
+      b.className='cdrd '+cls; b.textContent=txt; b.title=tip+' (checked '+r.when+')';
+      q.appendChild(b);
     });
   }
   window.CBcdrPaint = cdrPaint;

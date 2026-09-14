@@ -796,6 +796,19 @@ const D = JSON.parse(document.getElementById('data').textContent);
 
 /* ========== formatting ========== */
 const n2 = v => Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+/* Search has to match what the reader can SEE. The haystacks are built from the English
+   payload, so in Spanish "uso de voz" found nothing while "vo" matched "voice". Fold the
+   row's rendered text in, and rebuild it whenever the language changes. */
+function cbHay(tr){
+  const lang = document.documentElement.lang || 'en';
+  if(tr.dataset.hlang !== lang){
+    if(tr.dataset.h0 === undefined) tr.dataset.h0 = tr.dataset.h || '';
+    tr.dataset.h = (tr.dataset.h0 + ' ' + (tr.textContent || ''))
+                     .toLowerCase().replace(/\s+/g,' ');
+    tr.dataset.hlang = lang;
+  }
+  return tr.dataset.h;
+}
 const n0 = v => Math.round(v).toLocaleString('en-US');
 const money = (v,{dash=true,sign=false,plain=false}={}) => {
   if(dash && Math.abs(v)<0.005) return '<span class="muted">&mdash;</span>';
@@ -2199,7 +2212,7 @@ renderDetail();
     document.querySelectorAll('#det tbody tr.det').forEach(tr=>{
       total++;
       const wasHidden=tr.hidden;
-      const match=!term||tr.dataset.h.includes(term);
+      const match=!term||cbHay(tr).includes(term);
       const vis = match && (term!=='' || mode==='all' || open.has(tr.dataset.m));
       tr.hidden=!vis; if(match) shown++;
       if(wasHidden && vis) reveal.push(tr);   /* newly on screen: worth pointing at */
@@ -2388,7 +2401,7 @@ document.querySelectorAll('[data-export]').forEach(btn=>{
     const rows=[...table.querySelectorAll('tbody tr[data-h]')];
     let shown=0, sum=0;
     rows.forEach(tr=>{
-      const hit=!t||tr.dataset.h.includes(t);
+      const hit=!t||cbHay(tr).includes(t);
       tr.hidden=!hit;
       if(hit){ shown++;
         const c=tr.children[amtIdx];

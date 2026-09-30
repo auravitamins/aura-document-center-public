@@ -17,7 +17,9 @@
   --ink:#0B2344; --ink2:#60758D; --ink3:#7C8CA1;
   --line:#DCE5ED; --line2:#E8EEF4;
   /* semantic */
-  --red:#C9363E; --red-ink:#A82A31; --amber:#B66A0A; --amber2:#B66A0A;
+  --red:#C9363E; --red-ink:#A82A31; --amber:#B66A0A; --amber2:#A85F08;
+  /* teal is a 2.2:1 label on its own tint; this is the readable one */
+  --teal-ink:#0B7A78;
   --blue:#0874A8; --violet:#1769AA; --neutral:#687789;
   --tint-blue:#EDF6FC; --tint-green:#EAF8F2; --tint-red:#FFF0F1;
   --tint-amber:#FFF6E7; --tint-violet:#EEF2F9; --tint-teal:#E6F8F7; --tint-slate:#F3F7FA;
@@ -151,6 +153,7 @@ h1 .accent{color:var(--teal)}
 
 /* ---------- tables ---------- */
 .tablecard{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.attnsplit{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:18px}
 .tscroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
 thead th{background:var(--tint-slate);text-align:left;font-weight:600;font-size:12.5px;color:var(--ink2);
@@ -796,6 +799,149 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
   #det td,#det th{padding:5px 6px;word-break:normal} #det .mono{font-size:9px}
   thead{display:table-header-group}
 }
+
+/* ══════════════════ phone ══════════════════
+   Not the desk layout narrowed. On a phone this report is asked three questions —
+   what do I owe, what am I owed, is anything wrong — so navigation moves to the
+   thumb, the chrome collapses to one row, and the figures lead. The wide tables
+   stay wide, because a reconciliation table that reflows stops being evidence;
+   they get a real scroll affordance instead. */
+.mnav{display:none}
+.msheet[hidden]{display:none}
+
+@media (max-width:760px){
+  .shell{padding:0 16px calc(86px + env(safe-area-inset-bottom))}
+
+  /* ---- app bar: brand and language on one row, the period on the next ---- */
+  .hdr{flex-wrap:wrap;align-items:center;gap:6px 12px;padding:12px 0 8px}
+  .brand{flex:1 1 auto;min-width:0}
+  .brand .tag{display:none}
+  .brand .mark{height:29px}
+  .brand .wt{font-size:19px}
+  .hdr>div{display:contents}
+  .langsw{order:1;flex:0 0 auto}
+  .daterange{order:2}
+  .upd{order:3}
+  .daterange,.upd{font-size:11px;margin:0}
+  .daterange .rl{font-size:10px}
+
+  /* ---- the sticky rail becomes a title bar; the sections move to the thumb ---- */
+  .navwrap{margin:0 -16px;padding:0 16px}
+  .navwrap .tabs,.navwrap .hint{display:none}
+  .navwrap .sr{position:static;width:auto;height:auto;overflow:visible;clip:auto;
+    display:block;padding:10px 0 11px;font-size:13.5px;font-weight:700;
+    color:var(--navy);letter-spacing:-.01em}
+
+  /* ---- hero ---- */
+  #intro .kicker{display:none}
+  #intro h1{font-size:29px;letter-spacing:-.022em;text-wrap:balance;margin-bottom:8px}
+  #intro .sub1{font-size:15.5px;line-height:1.45;text-wrap:pretty;margin-bottom:10px}
+  /* the two figures wrapped while keeping the divider of a row they no longer form */
+  .herobal{width:100%;margin-top:14px}
+  .herobal>div{flex:1 1 100%;border-right:0;border-bottom:1px solid var(--line);padding:11px 15px}
+  .herobal>div:last-child{border-bottom:0}
+  .herobal b{font-size:23px}
+
+  /* ---- four numbers per screen, not one ---- */
+  .stats,.stats.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  .stat{padding:12px 13px 13px;min-width:0}
+  .stat svg{width:18px;height:18px}
+  .stat .k{font-size:11.5px;min-height:0;margin-top:7px}
+  .stat .v{font-size:21px;margin:3px 0 2px}
+  .stat .s{font-size:10.5px}
+
+  /* ---- panels that were still holding two tracks at 390px ---- */
+  .attnsplit{grid-template-columns:1fr!important;gap:14px}
+  .panelhd{flex-wrap:wrap;gap:4px 12px}
+
+  /* ---- tables keep their width; the edges say so ---- */
+  .tscroll{
+    background:
+      linear-gradient(90deg,#fff 28%,rgba(255,255,255,0)) left center/22px 100% no-repeat,
+      linear-gradient(-90deg,#fff 28%,rgba(255,255,255,0)) right center/22px 100% no-repeat,
+      radial-gradient(farthest-side at 0 50%,rgba(11,35,68,.15),rgba(11,35,68,0)) left center/11px 100% no-repeat,
+      radial-gradient(farthest-side at 100% 50%,rgba(11,35,68,.15),rgba(11,35,68,0)) right center/11px 100% no-repeat;
+    background-attachment:local,local,scroll,scroll;
+    -webkit-overflow-scrolling:touch}
+
+  /* an invoice number is a control, so give it a thumb-sized target */
+  .hasdoc,.nodoc{padding:5px 7px;margin:-5px -7px}
+
+  .toTop{right:16px;bottom:calc(78px + env(safe-area-inset-bottom));width:42px;height:42px}
+
+  /* ---- the bar itself ---- */
+  .mnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;
+    z-index:80;background:rgba(255,255,255,.93);
+    backdrop-filter:saturate(180%) blur(12px);-webkit-backdrop-filter:saturate(180%) blur(12px);
+    border-top:1px solid var(--line);padding:5px 4px calc(5px + env(safe-area-inset-bottom))}
+  .mnav a,.mnav button{position:relative;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:3px;min-height:48px;padding:4px 2px;border:0;background:none;
+    font:inherit;font-size:10.5px;font-weight:600;line-height:1.1;text-align:center;
+    color:var(--ink2);text-decoration:none;border-radius:10px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:color .15s,background .15s}
+  .mnav svg{width:21px;height:21px;flex:none;stroke:currentColor}
+  .mnav [aria-current="true"]{color:var(--teal-ink);background:var(--tint-teal)}
+  .mnav a:active,.mnav button:active{background:var(--surface-alt)}
+  .mnav :focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+  .mnav .mb{position:absolute;top:1px;left:calc(50% + 6px);min-width:16px;height:16px;padding:0 4px;
+    border-radius:999px;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;
+    line-height:16px;text-align:center;box-shadow:0 0 0 2px #fff}
+  .mnav .mb[hidden]{display:none!important}
+
+  /* ---- all sections, one tap away ---- */
+  .msheet{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end}
+  .msback{position:absolute;inset:0;background:rgba(11,35,68,.42)}
+  .mspanel{position:relative;width:100%;max-height:80vh;overflow:auto;background:#fff;
+    border-radius:16px 16px 0 0;padding:8px 12px calc(14px + env(safe-area-inset-bottom));
+    box-shadow:0 -8px 30px rgba(11,35,68,.18);animation:msup .24s cubic-bezier(.22,1,.36,1)}
+  @keyframes msup{from{transform:translateY(16px)}to{transform:none}}
+  .msgrab{width:38px;height:4px;border-radius:999px;background:var(--lgray);margin:2px auto 8px}
+  .mshd{display:flex;align-items:center;justify-content:space-between;
+    font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--slate);padding:0 6px 6px}
+  .msx{border:0;background:none;font-size:26px;line-height:1;color:var(--ink2);
+    padding:2px 8px;cursor:pointer;border-radius:8px}
+  .mslist{display:flex;flex-direction:column}
+  .mslist a{position:relative;display:flex;align-items:center;gap:11px;min-height:46px;
+    padding:0 6px;color:var(--ink);text-decoration:none;font-size:14.5px;font-weight:600;
+    border-bottom:1px solid var(--line2)}
+  .mslist a:last-child{border-bottom:0}
+  .mslist a:active{background:var(--surface-alt)}
+  .mslist svg{flex:none;stroke:var(--slate)}
+  .mslist .mb{margin-left:auto;min-width:19px;height:19px;padding:0 5px;border-radius:999px;
+    background:var(--red);color:#fff;font-size:10.5px;font-weight:800;line-height:19px;text-align:center}
+  .mslist .mb[hidden]{display:none!important}
+}
+
+@media (max-width:760px) and (prefers-reduced-motion:reduce){
+  .mspanel{animation:none}
+}
+
+/* a phone in landscape is still a phone, but the bar should not eat a short viewport */
+@media (max-width:900px) and (max-height:460px){
+  .mnav{position:static;grid-template-columns:repeat(5,1fr)}
+  .shell{padding-bottom:28px}
+  .toTop{bottom:18px}
+}
+
+@media (max-width:760px){
+  /* the title bar needs an edge, or it reads as text floating over the page */
+  .navwrap{border-bottom:1px solid var(--line2);background:rgba(247,249,252,.94)}
+  .navwrap .sr{display:flex;align-items:center;gap:7px}
+  .navwrap .sr::before{content:"";width:3px;height:13px;border-radius:2px;background:var(--teal)}
+  /* period and extract date share one line */
+  .daterange,.upd{white-space:nowrap;font-size:10.5px}
+  #intro .hero{padding:16px 15px 18px}
+}
+@media (max-width:430px){
+  .upd .updok,.upd .dot{display:none}
+  .mnav a,.mnav button{font-size:10px}
+}
+
+@media (max-width:760px){
+  /* a section heading must clear the sticky title bar when jumped to */
+  #pages>*{scroll-margin-top:56px}
+}
 </style>
 </head>
 <body>
@@ -814,9 +960,9 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
       </div>
       <div class="daterange" title="The period this report covers">
         <span class="rl">Covers</span>
-        <span id="rangeLabel">01/01/2026 &ndash; 09/14/2026</span>
+        <span id="rangeLabel"></span>
       </div>
-      <div class="upd">Extracted 09/14/2026 &nbsp;<span class="dot"></span> Data up to date</div>
+      <div class="upd"><span data-i18n>Extracted</span> <span id="updDate"></span> &nbsp;<span class="dot"></span> <span class="updok" data-i18n>Data up to date</span></div>
     </div>
   </header>
 
@@ -881,6 +1027,16 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
     </div>
   </div>
 
+  <nav class="mnav" id="mnav" aria-label="Sections"></nav>
+  <div class="msheet" id="msheet" hidden>
+    <div class="msback" data-msclose></div>
+    <div class="mspanel" role="dialog" aria-modal="true" aria-labelledby="msTitle">
+      <div class="msgrab" aria-hidden="true"></div>
+      <div class="mshd"><span id="msTitle" data-i18n>All sections</span>
+        <button class="msx" data-msclose aria-label="Close">&times;</button></div>
+      <div class="mslist" id="mslist"></div>
+    </div>
+  </div>
   <button class="toTop" id="toTop" title="Back to top" aria-label="Back to top">
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
       stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
@@ -889,7 +1045,7 @@ table.cdrsum tr.vtot td{font-weight:800;background:var(--surface-alt);border-bot
     <div class="fmain">
       <div class="fbrand"><b>AuraLedger</b> <span class="sep">&middot;</span>
         <span data-i18n>Picallex &amp; VIP2Phone reconciliation for Guildin LLC</span></div>
-      <div class="fmeta" data-build="2026-09-22a" data-i18n>Build 2026-09-22 &middot; 187 invoice PDFs linked
+      <div class="fmeta" data-build="2026-09-30a" data-i18n>Build 2026-09-30 &middot; 187 invoice PDFs linked
         &middot; call detail checked on 13 of 38 voice weeks (29.8% of billed minutes)
         &middot; Covers 01/01/2026 &ndash; 09/21/2026 &middot; unaudited, for internal management use</div>
       <nav class="flinks" id="flinks" aria-label="Sections"></nav>
@@ -935,7 +1091,15 @@ const M3=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec
 const MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
 /* one date format across the whole report: MM/DD/YYYY */
 const dmy = s => { const [y,m,d]=s.split('-'); return m+'/'+d+'/'+y; };
-const AS_OF = new Date('2026-09-09T00:00:00');
+/* one source of truth: a second typed-in date is how 245356 came out '-12 days old' */
+const AS_OF = new Date(D.asof+'T00:00:00');
+/* the header used to carry these as typed-in markup, so both went stale silently */
+(function(){
+  const first=D.costs[0].date, last=D.costs[D.costs.length-1].date;
+  const put=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+  put('rangeLabel', dmy(first)+' \u2013 '+dmy(last));
+  put('updDate', dmy(D.asof));
+})();
 const days = s => Math.round((AS_OF-new Date(s+'T00:00:00'))/86400000);
 
 /* ========== icons ========== */
@@ -1083,6 +1247,48 @@ document.getElementById('tabs').innerHTML = TABS.map(([id,label,icon],i)=>
    <span class="badge" data-badge="${id}" hidden></span></a>`).join('')
  + `<span class="hint">Press <kbd>1</kbd>&ndash;<kbd>9</kbd> to jump &middot; <kbd>J</kbd>&nbsp;<kbd>K</kbd> step</span>`;
 
+/* ---------- phone navigation ----------
+   The phone is asked three things: what do I owe, what am I owed, is anything wrong.
+   Four sections answer them, so those four sit under the thumb and the other seven
+   live one tap away rather than in a rail that scrolls sideways off the screen. */
+const MNAV=[['intro','Home','home'],['s8','Balances','scale'],
+            ['s6','Invoices','file'],['s7','Differences','msg']];
+(function(){
+  const bar=document.getElementById('mnav'), list=document.getElementById('mslist');
+  if(!bar||!list) return;
+  bar.innerHTML = MNAV.map(([id,label,icon],i)=>
+    `<a href="#${id}" data-t="${id}" aria-current="${i===0}">${ic(icon,{s:21})}
+       <span>${label}</span><span class="mb" data-badge="${id}" hidden></span></a>`).join('')
+    + `<button type="button" id="mnavMore" aria-haspopup="dialog" aria-expanded="false">
+         ${ic('layers',{s:21})}<span>More</span></button>`;
+  list.innerHTML = TABS.map(([id,label,icon])=>
+    `<a href="#${id}" data-t="${id}">${ic(icon,{s:18})}<span>${label}</span>
+       <span class="mb" data-badge="${id}" hidden></span></a>`).join('');
+
+  const sheet=document.getElementById('msheet'), more=document.getElementById('mnavMore');
+  let lastFocus=null;
+  function open(){ lastFocus=document.activeElement; sheet.hidden=false;
+    more.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden';
+    const f=list.querySelector('a'); if(f) f.focus(); }
+  function close(){ sheet.hidden=true; more.setAttribute('aria-expanded','false');
+    document.body.style.overflow=''; if(lastFocus) lastFocus.focus(); }
+  /* the scroll-spy catches up a frame later; a bar under the thumb has to answer now */
+  bar.addEventListener('click',e=>{
+    const a=e.target.closest('a[data-t]'); if(!a) return;
+    bar.querySelectorAll('[data-t]').forEach(x=>x.setAttribute('aria-current', x===a));
+    more.setAttribute('aria-current','false');
+  });
+  list.addEventListener('click',e=>{
+    const a=e.target.closest('a[data-t]'); if(!a) return;
+    const inBar=[...bar.querySelectorAll('[data-t]')].find(x=>x.dataset.t===a.dataset.t);
+    bar.querySelectorAll('[data-t]').forEach(x=>x.setAttribute('aria-current', x===inBar));
+    more.setAttribute('aria-current', String(!inBar));
+  });
+  more.addEventListener('click',open);
+  sheet.addEventListener('click',e=>{ if(e.target.closest('[data-msclose]')||e.target.closest('a')) close(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !sheet.hidden){ e.preventDefault(); close(); } });
+})();
+
 /* ========== stat card helper ========== */
 const stat = (icon,k,v,s,tone='',iconColor) =>
  `<div class="stat ${tone}">${ic(icon,{s:24,c:iconColor||'currentColor',cls:'ico'})}
@@ -1228,7 +1434,7 @@ pages.intro = `
   <div class="panel slate">
     <div class="panelhd"><div class="t">What needs your attention?</div>
       <a href="#s7" data-go="s7">Open all differences ${ic('arrowR',{s:14})}</a></div>
-    <div style="display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:18px">
+    <div class="attnsplit">
       <div>
         ${ATTN.filter(a=>a.n>0).map(a=>
           `<a class="attn" href="#${a.go}" data-go="${a.go}">
@@ -2788,6 +2994,14 @@ document.querySelectorAll('[data-export]').forEach(btn=>{
    Translates the rendered DOM rather than the builders, so every generated string is
    covered and switching back is lossless. Numbers, dates and invoice ids never change. */
 const ES = {
+"All sections":"Todas las secciones",
+"Home":"Inicio",
+"Balances":"Saldos",
+"Invoices":"Facturas",
+"Differences":"Diferencias",
+"More":"Más",
+"Extracted":"Extraído",
+"Data up to date":"Datos al día",
 "Open the Drive folder":"Abrir la carpeta de Drive",
 "This invoice is not filed yet.":"Esta factura aún no está archivada.",
 "The rebill is in the accounting record, but its PDF has not been added to the Drive folder, so there is nothing to show here. Every figure above comes from the accounting export.":"El recobro está en el registro contable, pero su PDF no se ha agregado a la carpeta de Drive, así que no hay nada que mostrar aquí. Todas las cifras de arriba provienen de la exportación contable.",
@@ -3498,15 +3712,22 @@ const MONTH_ES = {January:'Enero',February:'Febrero',March:'Marzo',April:'Abril'
     badges[a.go]=badges[a.go]||{n:0,color:a.color};
     badges[a.go].n+=a.n; });
   Object.entries(badges).forEach(([id,v])=>{
-    const b=document.querySelector(`[data-badge="${id}"]`);
-    if(b && v.n>0){ b.textContent=v.n; b.hidden=false; b.style.background=v.color;
-      if(byId[id]) byId[id].title=`${v.n} item${v.n===1?'':'s'} needing attention`; }
+    /* querySelector took the first rail only; the phone bar needs the same counts */
+    document.querySelectorAll(`[data-badge="${id}"]`).forEach(b=>{
+      if(v.n>0){ b.textContent=v.n; b.hidden=false; b.style.background=v.color; } });
+    if(v.n>0 && byId[id]) byId[id].title=`${v.n} item${v.n===1?'':'s'} needing attention`;
   });
 
   function setActive(id){
     items.forEach(a=>a.setAttribute('aria-current', a.dataset.t===id));
     const s=secs.find(x=>x.id===id);
     if(s) cur.textContent = s.label;
+    /* the phone bar carries four of eleven sections, so anything else lights "More" */
+    const mp=[...document.querySelectorAll('#mnav [data-t]')];
+    const hit=mp.some(a=>a.dataset.t===id);
+    mp.forEach(a=>a.setAttribute('aria-current', a.dataset.t===id));
+    const more=document.getElementById('mnavMore');
+    if(more) more.setAttribute('aria-current', String(!hit));
   }
 
   /* scroll-spy: the section whose top has most recently passed under the rail */
